@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProfileBook.Views.SignInView">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="EntryStyle" TargetType="Entry">
+                <Setter Property="WidthRequest" Value="300"></Setter>
+                <Setter Property="FontSize" Value="Medium"></Setter>
+                <Setter Property="HorizontalOptions" Value="Center"></Setter>
+                <Setter Property="VerticalOptions" Value="Center"></Setter>
+                <Setter Property="HeightRequest" Value="50"></Setter>
+            </Style>       
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <StackLayout>
+
+        <Entry x:Name="loginEntry" 
+               Placeholder="Login"
+               Style="{StaticResource EntryStyle}"/>
+
+        <Entry x:Name="passwordEntry"
+               Placeholder="Password"
+               IsPassword="True"
+               Style="{StaticResource EntryStyle}"/>
+
+        <Button Text="SIGN IN"
+                WidthRequest="150"
+                BackgroundColor="LightCoral"
+                Command="{Binding UserSignInCommand}"
+                HorizontalOptions="Center"
+                FontSize="Medium"
+                IsEnabled="False"/>
+        <!-- HYPERLINK v1-->
+
+        <Label Text="Sign Up" HorizontalOptions="Center">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Sign Up"
+                  TextColor="Blue"
+                  TextDecorations="Underline">
+                        <Span.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NextPage}"></TapGestureRecognizer>
+                        </Span.GestureRecognizers>
+                    </Span>
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+    </StackLayout>
+</ContentPage>

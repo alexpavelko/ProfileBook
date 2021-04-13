@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" Title="Users SignUp"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProfileBook.Views.SignUpView">
+    <StackLayout>
+        
+        <Entry x:Name="loginEntry"
+               Placeholder="Login"
+               HorizontalOptions="Center"
+               FontSize="Medium"/>
+        
+        <Entry x:Name="passwordEntry"
+               Placeholder="Password"
+               IsPassword="True"               
+               HorizontalOptions="Center"
+               FontSize="Medium" />
+
+        <Entry x:Name="confirmPasswordEntry"
+               Placeholder="Confirm Password"
+               IsPassword="True"              
+               HorizontalOptions="Center"
+               FontSize="Medium" />
+        
+        <Button Text="SIGN UP"
+                Command="{Binding UserSignUpCommand}"
+                HorizontalOptions="Center"
+                FontSize="Medium" />
+    
+    </StackLayout>
+</ContentPage>
