@@ -2,29 +2,40 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" Title="Users SignUp"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProfileBook.Views.SignUpView">
-    <StackLayout>
-        
-        <Entry x:Name="loginEntry"
-               Placeholder="Login"
-               HorizontalOptions="Center"
-               FontSize="Medium"/>
-        
-        <Entry x:Name="passwordEntry"
-               Placeholder="Password"
-               IsPassword="True"               
-               HorizontalOptions="Center"
-               FontSize="Medium" />
-
-        <Entry x:Name="confirmPasswordEntry"
-               Placeholder="Confirm Password"
-               IsPassword="True"              
-               HorizontalOptions="Center"
-               FontSize="Medium" />
-        
-        <Button Text="SIGN UP"
-                Command="{Binding UserSignUpCommand}"
-                HorizontalOptions="Center"
-                FontSize="Medium" />
-    
-    </StackLayout>
+    <ScrollView>
+        <StackLayout x:Name="MainStack">
+            <Frame Style="{StaticResource FrameStyle}">
+                <Label Text="Users SignUp" Style="{StaticResource MainLabelStyle}"/>
+            </Frame>
+            <Image Source="user_add.png" Style="{StaticResource MainImageStyle}"/>
+            <StackLayout x:Name="UserControlsStack" Margin="0,50,0,0">
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="user_login.png" />
+                    <Entry x:Name="loginEntry"
+                            Placeholder="Login"              
+                            Style="{StaticResource EntryStyle}"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="user_password.png"/>
+                    <Entry x:Name="passwordEntry" 
+                            Placeholder="Password"
+                            IsPassword="True"           
+                            Style="{StaticResource EntryStyle}"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="key_icon.png"/>
+                    <Entry x:Name="passwordConfirmEntry" 
+                            Placeholder="Confirm Password"
+                            IsPassword="True"           
+                            Style="{StaticResource EntryStyle}"/>
+                </StackLayout>
+                <Button Text="SIGN UP"              
+                            Command="{Binding UserSignUpCommand}"     
+                            Style="{StaticResource ButtonStyle}"/>
+                <Button Text="Back"              
+                            Command="{Binding BackCommand}"     
+                            Style="{StaticResource ButtonStyle}"/>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
 </ContentPage>
