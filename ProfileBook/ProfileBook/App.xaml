@@ -5,5 +5,36 @@
              x:Class="ProfileBook.App">
     <prism:PrismApplication.Resources>
 
+        <ResourceDictionary>
+
+            <Style x:Key="StackLayoutStyle" TargetType="StackLayout">
+                <Setter Property="Margin" Value="0,150,0,0"></Setter>    
+            </Style>
+            
+            <Style x:Key="EntryStyle" TargetType="Entry">
+                <Setter Property="FontSize" Value="16"></Setter>
+                <Setter Property="FontSize" Value="Medium"></Setter>
+                <Setter Property="HeightRequest" Value="50"></Setter>
+                <Setter Property="FontFamily" Value="Comic Sans MS"></Setter>
+                <Setter Property="HeightRequest" Value="60"></Setter>
+            </Style>
+
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="#FFD33D8E"></Setter>
+                <Setter Property="TextColor" Value="White"></Setter>
+                <Setter Property="FontSize" Value="20"></Setter>
+                <Setter Property="FontAttributes" Value="Italic"></Setter>
+            </Style>
+            
+            <Style x:Key="HyperLinkStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="Blue"></Setter>
+                <Setter Property="TextDecorations" Value="Underline"></Setter>
+                <Setter Property="FontSize" Value="16"></Setter>
+                <Setter Property="Margin" Value="0,25,0,0"></Setter>
+                <Setter Property="HorizontalOptions" Value="Center"></Setter>
+            </Style>
+            
+        </ResourceDictionary>
+
     </prism:PrismApplication.Resources>
 </prism:PrismApplication>
