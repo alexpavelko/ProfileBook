@@ -2,44 +2,41 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProfileBook.Views.SignInView">
-   
-    <StackLayout>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Label Text="Users SignIn" HorizontalTextAlignment="Center" TextColor="White" FontSize="26"/>
-        </Frame>
-
-        <Image WidthRequest="200" Source="ProfileBook.Resources.Drawable.user.png"></Image>
-        
-        <StackLayout Style="{StaticResource StackLayoutStyle}">
-            
-        <Entry x:Name="loginEntry" 
-               Placeholder="Login"              
-               Style="{StaticResource EntryStyle}"/>
-        
-        <Entry x:Name="passwordEntry" 
-               Placeholder="Password"
-               IsPassword="True"           
-               Style="{StaticResource EntryStyle}"/>
-
+    <ScrollView>
+        <StackLayout x:Name="MainStack">
+            <Frame Style="{StaticResource FrameStyle}">
+                <Label Text="Users SignIn" Style="{StaticResource MainLabelStyle}"/>
+            </Frame>
+            <Image Source="user_person.png" Style="{StaticResource MainImageStyle}"/>
+            <StackLayout x:Name="UserControlsStack" Margin="0,50,0,0">
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="user_login.png" />
+                    <Entry x:Name="loginEntry"
+                            Placeholder="Login"              
+                            Style="{StaticResource EntryStyle}"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="user_password.png"/>
+                    <Entry x:Name="passwordEntry" 
+                            Placeholder="Password"
+                            IsPassword="True"           
+                            Style="{StaticResource EntryStyle}"/>
+                </StackLayout>
+                <Button Text="SIGN IN"              
+                            Command="{Binding UserSignInCommand}"     
+                            Style="{StaticResource ButtonStyle}"/>
+                <Label Text="Sign Up" Style="{StaticResource HyperLinkStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Sign Up">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding NextPage}"></TapGestureRecognizer>
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </StackLayout>
         </StackLayout>
-        
-        <Button Text="SIGN IN"              
-                Command="{Binding UserSignInCommand}"     
-                Style="{StaticResource ButtonStyle}"
-               />
-        <!-- HYPERLINK v1-->
-
-        <Label Text="Sign Up" Style="{StaticResource HyperLinkStyle}">
-            <Label.FormattedText>
-                <FormattedString>
-                    <Span Text="Sign Up">
-                        <Span.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding NextPage}"></TapGestureRecognizer>
-                        </Span.GestureRecognizers>
-                    </Span>
-                </FormattedString>
-            </Label.FormattedText>
-        </Label>
-        
-    </StackLayout>
+    </ScrollView>
 </ContentPage>
