@@ -11794,13 +11794,16 @@ namespace ProfileBook.Droid
 			public const int tooltip_frame_light = 2131165329;
 			
 			// aapt resource value: 0x7F070092
-			public const int user_login = 2131165330;
+			public const int user_add = 2131165330;
 			
 			// aapt resource value: 0x7F070093
-			public const int user_password = 2131165331;
+			public const int user_login = 2131165331;
 			
 			// aapt resource value: 0x7F070094
-			public const int user_person = 2131165332;
+			public const int user_password = 2131165332;
+			
+			// aapt resource value: 0x7F070095
+			public const int user_person = 2131165333;
 			
 			static Drawable()
 			{

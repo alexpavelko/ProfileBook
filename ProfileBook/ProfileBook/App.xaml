@@ -43,7 +43,7 @@
                 <Setter Property="TextColor" Value="Blue"></Setter>
                 <Setter Property="TextDecorations" Value="Underline"></Setter>
                 <Setter Property="FontSize" Value="Small"></Setter>
-                <Setter Property="Margin" Value="0,25,0,0"></Setter>
+                <Setter Property="Margin" Value="0,25,0,50"></Setter>
                 <Setter Property="HorizontalOptions" Value="Center"></Setter>
             </Style>
             

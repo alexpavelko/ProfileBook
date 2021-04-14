@@ -30,7 +30,7 @@
                         <FormattedString>
                             <Span Text="Sign Up">
                                 <Span.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding NextPage}"></TapGestureRecognizer>
+                                    <TapGestureRecognizer Command="{Binding NextPageCommand}"></TapGestureRecognizer>
                                 </Span.GestureRecognizers>
                             </Span>
                         </FormattedString>
