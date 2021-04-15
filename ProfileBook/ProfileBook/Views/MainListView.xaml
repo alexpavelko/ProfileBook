@@ -2,45 +2,70 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProfileBook.Views.MainListView">
-    <ScrollView>
-        <StackLayout>
 
-            <Grid x:Name="ToolBar" BackgroundColor="#2196F3">
-                <BoxView Grid.Column="0" Grid.Row="0" />
-                <BoxView Grid.Column="1" Grid.Row="0" />
-                <BoxView Grid.Column="2" Grid.Row="0" />
+    <StackLayout>
+
+        <Grid x:Name="ToolBar" HeightRequest="90" BackgroundColor="#2196F3">
+                       
+            <Label Text="Main List"                   
+                   Style="{StaticResource MainLabelStyle}"
+                   Grid.Column="0" Grid.Row="0"/>
+
+            <ImageButton Style="{StaticResource ImageButtonStyle}"                          
+                         Command="{Binding LogOutCommand}"
+                         Source="log_out.png"
+                         Margin="0,0,60,0"/>
+
+            <ImageButton Style="{StaticResource ImageButtonStyle}"                          
+                         Command="{Binding SettingsCommand}"
+                         Source="settings_icon.png"                           
+                         Margin="0,0,10,0"/>
                 
-                <Label Text="Main List"
-                       Style="{StaticResource MainLabelStyle}"
-                       Grid.Column="0"
-                       Grid.Row="0"/>
+        </Grid>
 
-                <ImageButton Style="{StaticResource ImageButtonStyle}"
-                             Command="{Binding LogOutCommand}"
-                             Source="log_out.png"
-                             Margin="0,0,10,0"
-                             Grid.Column="2"
-                             Grid.Row="0"/>
-
-                <ImageButton Style="{StaticResource ImageButtonStyle}"
-                              Command="{Binding SettingsCommand}"
-                              Source="settings.png"
-                              WidthRequest="50"
-                              Margin="0,0,50,0"
-                              Grid.Column="2"
-                              Grid.Row="0"/>
-
-            </Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
             
-        </StackLayout>
-    </ScrollView>
+            <ScrollView Grid.Row="0">
+                <StackLayout>
+                    <ListView ItemsSource="{Binding ProfileList}" RowHeight="150">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Grid>
+                                        <Image Source="{Binding ProfileImage}" Grid.Column="0" Grid.Row="0"/>
+                                        <Label  Text="{Binding NickName}" Style="{StaticResource LabelStyle}"  FontSize="Title" Margin="0,20,0,0" />
+                                        <Label Text="{Binding Name}"  Style="{StaticResource LabelStyle}" Margin="0,60,0,0"/>
+                                        <Label Text="{Binding CreationTime}" Style="{StaticResource LabelStyle}" Margin="0,100,0,0" />
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackLayout>
+            </ScrollView>
+            <Button Text="Add" FontAttributes="Bold" BorderColor="#4780ae" BorderWidth="5"  BackgroundColor="#cbe3fe" BorderRadius="30" TextColor="#315673" HorizontalOptions="End" WidthRequest="60" HeightRequest="60" Margin="0,0,20,90" VerticalOptions="End"/>
+        </Grid>
+       
+    </StackLayout>
+   
     <ContentPage.Resources>
-        
+
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="TextColor" Value="#a0a0a0"></Setter>
+            <Setter Property="Grid.Column" Value="1"></Setter>
+            <Setter Property="Grid.Row" Value="0"></Setter>
+        </Style>
+
         <Style x:Key="ImageButtonStyle" TargetType="ImageButton">
             <Setter Property="BackgroundColor" Value="#2196F3"></Setter>
             <Setter Property="HorizontalOptions" Value="End"></Setter>
             <Setter Property="WidthRequest" Value="25"></Setter>
+            <Setter Property="Grid.Row" Value="0"></Setter>
+            <Setter Property="Grid.Column" Value="2"></Setter>
         </Style>
-        
+
     </ContentPage.Resources>
 </ContentPage>
