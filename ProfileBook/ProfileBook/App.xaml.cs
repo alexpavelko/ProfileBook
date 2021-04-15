@@ -13,7 +13,7 @@ namespace ProfileBook
         protected override void OnInitialized()
         {
             InitializeComponent();
-            NavigationService.NavigateAsync($"{nameof(SignInView)}");
+            NavigationService.NavigateAsync($"{nameof(MainListView)}");
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -21,9 +21,7 @@ namespace ProfileBook
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<SignInView, SignInViewModel>();
             containerRegistry.RegisterForNavigation<SignUpView, SignUpViewModel>();
-
-            //containerRegistry.RegisterForNavigation<FriendsListPage, FriendsListViewModel >();
-           // containerRegistry.RegisterForNavigation<FriendPage, FriendViewModel>();
+            containerRegistry.RegisterForNavigation<MainListView, MainListViewModel>();
         }
         protected override void OnStart()
         {

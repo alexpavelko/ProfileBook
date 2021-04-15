@@ -16,6 +16,7 @@
             
             <Style x:Key="MainLabelStyle" TargetType="Label">
                 <Setter Property="HorizontalTextAlignment" Value="Center"></Setter>
+                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
                 <Setter Property="TextColor" Value="White"></Setter>
                 <Setter Property="FontSize" Value="Large"></Setter>
             </Style>
@@ -46,6 +47,8 @@
                 <Setter Property="Margin" Value="0,25,0,50"></Setter>
                 <Setter Property="HorizontalOptions" Value="Center"></Setter>
             </Style>
+
+           
             
         </ResourceDictionary>
 
