@@ -1,9 +1,11 @@
-﻿using System;
+﻿using SQLite;
+using System;
 
 namespace ProfileBook.Models
 {
-    class ProfileModel
+    public class ProfileModel : IEntityBase
     {
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }        
         public string NickName { get; set; }
         public string Name { get; set; }
