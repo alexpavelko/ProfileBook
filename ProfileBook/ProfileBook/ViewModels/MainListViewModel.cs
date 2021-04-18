@@ -138,7 +138,18 @@ namespace ProfileBook.ViewModels
                 ProfileList = new ObservableCollection<ProfileModel>(profileList);
             }
         }
-       
+        private async void OnDeleteTap()
+        {
+            if (await UserDialogs.Instance.ConfirmAsync("Are you sure you want to delete?", "Confirm action", "OK", "Cancel"))
+                if (SelectedItem != null)
+                {
+                    await _repository.DeleteAsync(SelectedItem);
+
+                    var profileList = await _repository.GetAllAsync<ProfileModel>();
+
+                    ProfileList = new ObservableCollection<ProfileModel>(profileList);
+                }
+        }
 
         #endregion
 
