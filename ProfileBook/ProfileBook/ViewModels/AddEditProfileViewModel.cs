@@ -99,6 +99,23 @@ namespace ProfileBook.ViewModels
 
         #endregion
 
+        #region --- Private Helpers ---
+       
+
+        private bool Validate()
+        {
+            if (Description == null)
+                Description = string.Empty;
+            var validation = new AddEditProfileViewValidator();
+            if (validation.CheckUserFields(Name, NickName, Description) == false)
+            {
+                UserDialogs.Instance.Alert(validation.errorMessage, "Error");
+                return false;
+            }
+            return true;
+        }
+
+        #endregion
 
     }
 }
