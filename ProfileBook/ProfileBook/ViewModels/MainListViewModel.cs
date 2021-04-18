@@ -110,7 +110,35 @@ namespace ProfileBook.ViewModels
 
             ProfileList = new ObservableCollection<ProfileModel>(profileList);
         }
-        
+        private async void OnUpdateTap()
+        {
+            if (SelectedItem != null)
+            {
+                var profileToUpdate = new ProfileModel()
+                {
+                    Id = SelectedItem.Id,
+                    Name = SelectedItem.Name,
+                    NickName = SelectedItem.NickName,
+                    ProfileImage = SelectedItem.ProfileImage,
+                    CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")
+                };
+
+
+                var index = ProfileList.IndexOf(SelectedItem);
+
+                ProfileList.Remove(SelectedItem);
+
+                await _repository.UpdateAsync(profileToUpdate);
+
+
+                ProfileList.Insert(index, profileToUpdate);
+
+                var profileList = await _repository.GetAllAsync<ProfileModel>();
+
+                ProfileList = new ObservableCollection<ProfileModel>(profileList);
+            }
+        }
+       
 
         #endregion
 
