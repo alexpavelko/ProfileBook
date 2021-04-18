@@ -94,7 +94,17 @@ namespace ProfileBook.ViewModels
 
         #endregion
 
+        #region ----Private Helpers----
+
+        private async void OnLogOutTap()
+        {
+            //TODO: Users.Delete(userId) разлогинивание
+            await _navigationService.NavigateAsync(nameof(SignInView));
+        }
       
+        
+
+        #endregion
       
     }
 }
