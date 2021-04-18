@@ -100,6 +100,20 @@ namespace ProfileBook.ViewModels
         #endregion
 
         #region --- Private Helpers ---
+        private async void GetPhotoAsync()
+        {
+            try
+            {
+                var photo = await MediaPicker.PickPhotoAsync();
+
+                ProfileImage = photo.FullPath;
+            }
+            catch (Exception ex)
+            {
+                await UserDialogs.Instance.AlertAsync(ex.Message, "Error", "OK");
+            }
+        }
+
        
 
         private bool Validate()
