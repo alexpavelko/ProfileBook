@@ -101,10 +101,18 @@ namespace ProfileBook.ViewModels
             //TODO: Users.Delete(userId) разлогинивание
             await _navigationService.NavigateAsync(nameof(SignInView));
         }
-      
+
+        private async void OnAddButtonTap()
+        {
+            await _navigationService.NavigateAsync(nameof(AddEditProfileView));
+
+            var profileList = await _repository.GetAllAsync<ProfileModel>();
+
+            ProfileList = new ObservableCollection<ProfileModel>(profileList);
+        }
         
 
         #endregion
-      
+
     }
 }
