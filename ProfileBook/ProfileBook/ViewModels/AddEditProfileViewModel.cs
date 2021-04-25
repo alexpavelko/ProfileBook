@@ -4,36 +4,28 @@ using Prism.Mvvm;
 using System.Windows.Input;
 using Prism.Navigation;
 using ProfileBook.Views;
-using System.Collections.ObjectModel;
-using ProfileBook.Models;
-using ProfileBook.Services.Settings;
-using ProfileBook.Services.Repository;
-using System.Threading.Tasks;
 using ProfileBook.Validators;
 using Acr.UserDialogs;
 using Xamarin.Essentials;
 using System.IO;
+using ProfileBook.Services.Profile;
+using ProfileBook.Models;
 
 namespace ProfileBook.ViewModels
 {
-    class AddEditProfileViewModel : BindableBase
+    class AddEditProfileViewModel : BaseViewModel
     {
-        public AddEditProfileViewModel(INavigationService navigationService, IRepository repository)
+        private Profile CurrentProfile { get; set; }
+        private IProfileManager _profileManager;
+
+        public AddEditProfileViewModel(INavigationService navigationService,
+            IProfileManager profileManager) : base(navigationService)
         {
-            ProfileImage = "user_person.png";
-            _navigationService = navigationService;
-            _repository = repository;
+            this._profileManager = profileManager;
         }
 
-
-        #region --- Public Properties---
-
-        private INavigationService _navigationService;
-        private IRepository _repository;
-        public ICommand PreviousPageCommand => new Command(OnPreviousPageClick);
-        public ICommand SaveCommand => new Command(OnSaveProfileClick);
-        public ICommand ProfileImageClickCommand => new Command(OnImageClick);
-
+        #region --- Properties---
+      
         private string _profileImage;
         public string ProfileImage
         {
@@ -61,41 +53,32 @@ namespace ProfileBook.ViewModels
             get => _description;
             set => SetProperty(ref _description, value);
         }
+
         #endregion
 
-        #region --- Private Methods ---
+        #region --- Comands ---
 
-        private async void OnPreviousPageClick()
-        {         
-            await _navigationService.NavigateAsync(nameof(MainListView));
-        }
+        public ICommand PreviousPageCommand => new Command(async () => {
+            await NavigationService.NavigateAsync(nameof(MainListView));
+        });
 
-        private async void OnSaveProfileClick()
-        {
-            if (Validate() == true)
-            {
-                var profileToSave = new ProfileModel
-                {
-                    Name = Name,
-                    NickName = NickName,
-                    ProfileImage = ProfileImage,
-                    CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")                    
-                };
-              
-                var id = await _repository.InsertAsync(profileToSave);
+        public ICommand SaveCommand => new Command(async () => {
+            string errorMessage = ProfileValidator.IsProfileValid(CurrentProfile);
+            bool isValid = string.IsNullOrEmpty(errorMessage);
 
-                OnPreviousPageClick();
-            }
-        }
+            if(!isValid)
+            UserDialogs.Instance.Alert(errorMessage, "Error", "Ok");
 
-        private void OnImageClick()
-        {
+            await _profileManager.SaveProfile(CurrentProfile);
+        });
+
+        public ICommand ProfileImageClickCommand => new Command(() => {
             UserDialogs.Instance.ActionSheet(new ActionSheetConfig()
-                              .SetTitle("Choose Action")
-                              .Add("Pick at Gallery", () => GetPhotoAsync(), "gallery_icon.png")
-                              .Add("Take photo with camera", () => TakePhotoAsync(), "camera_icon.png")
-                          );
-        }
+                                .SetTitle("Choose Action")
+                                .Add("Pick at Gallery", () => GetPhotoAsync(), "gallery_icon.png")
+                                .Add("Take photo with camera", () => TakePhotoAsync(), "camera_icon.png")
+                            );
+        });
 
         #endregion
 
@@ -138,20 +121,6 @@ namespace ProfileBook.ViewModels
             }
         }
 
-        private bool Validate()
-        {
-            if (Description == null)
-                Description = string.Empty;
-            var validation = new AddEditProfileViewValidator();
-            if (validation.CheckUserFields(Name, NickName, Description) == false)
-            {
-                UserDialogs.Instance.Alert(validation.errorMessage, "Error");
-                return false;
-            }
-            return true;
-        }
-
         #endregion
-
     }
 }

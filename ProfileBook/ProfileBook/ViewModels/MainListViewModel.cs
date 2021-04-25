@@ -11,25 +11,21 @@ using ProfileBook.Services.Repository;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using System.ComponentModel;
-
+using ProfileBook.Services.Profile;
+using Xamarin.Essentials;
+using System.Collections.Generic;
 
 namespace ProfileBook.ViewModels
 {
-    class MainListViewModel : BindableBase, IInitializeAsync
+    class MainListViewModel : BaseViewModel
     {
-        #region --- Public Properties---
-
         private ISettingsManager _settingsManager;
-        private INavigationService _navigationService;
-        private IRepository _repository;
-        private INavigation navigation;
-        public ICommand LogOutCommand => new Command(OnLogOutTap);
-        public ICommand AddProfileCommand => new Command(OnAddButtonTap);
-        public ICommand UpdateCommand => new Command(OnUpdateTap);
-        public ICommand DeleteCommand => new Command(OnDeleteTap);
+        private IProfileManager _profileManager;
 
-        private ProfileModel _selectedItem;
-        public ProfileModel SelectedItem
+        #region --- Properties ---
+
+        private Profile _selectedItem;
+        public Profile SelectedItem
         {
             get => _selectedItem;
             set => SetProperty(ref _selectedItem, value);
@@ -64,8 +60,8 @@ namespace ProfileBook.ViewModels
         }
 
 
-        public ObservableCollection<ProfileModel> _profileList;
-        public ObservableCollection<ProfileModel> ProfileList
+        public ObservableCollection<Profile> _profileList;
+        public ObservableCollection<Profile> ProfileList
         {
             get => _profileList;
             set => SetProperty(ref _profileList, value);
@@ -73,85 +69,64 @@ namespace ProfileBook.ViewModels
 
         #endregion
 
-
         public MainListViewModel(INavigationService navigationService,
-                                 IRepository repository,
-                                 ISettingsManager settingsManager)
+                               ProfileManager profileManager,
+                                 ISettingsManager settingsManager) : base(navigationService)
         {
             _settingsManager = settingsManager;
-            _repository = repository;
-            _navigationService = navigationService;
-        }     
+            _profileManager = profileManager;
+        }
 
-        #region --- Public Methods ---
+        #region --- Comands ---
+        public ICommand LogOutCommand => new Command(async () => {
+            //TODO: Users.Delete(userId) разлогинивание
+            await NavigationService.NavigateAsync(nameof(SignInView));
+        });
+
+        public ICommand AddProfileCommand => new Command(async () => {
+            await NavigationService.NavigateAsync(nameof(AddEditProfileView));
+        });
+
+        public ICommand UpdateCommand => new Command(async ()=> {
+        if (SelectedItem != null)
+            {
+                var parameters = new NavigationParameters()
+               {
+                   { "Profile", SelectedItem }
+               };
+                await NavigationService.NavigateAsync(nameof(AddEditProfileView),parameters);
+            }
+        });
+        public ICommand DeleteCommand => new Command(async () => {
+            bool isConfirmed = await UserDialogs.Instance.ConfirmAsync("Are you sure you want to delete?", "Confirm action", "OK", "Cancel");
+            if (SelectedItem != null && isConfirmed)
+            {
+                await _profileManager.RemoveProfile(SelectedItem);
+            }
+        });
+
+        #endregion
 
         public async Task InitializeAsync(INavigationParameters parameters)
         {
-            var profileList = await _repository.GetAllAsync<ProfileModel>();
-
-            ProfileList = new ObservableCollection<ProfileModel>(profileList);
+            ProfileList =  new ObservableCollection<Profile> (await GetProfiles());
         }
 
-        #endregion
+        #region --- Private Helpers ---
 
-        #region ----Private Helpers----
-
-        private async void OnLogOutTap()
+        private async Task<List<Profile>> GetProfiles()
         {
-            //TODO: Users.Delete(userId) разлогинивание
-            await _navigationService.NavigateAsync(nameof(SignInView));
-        }
+            ProfileList.Clear();
 
-        private async void OnAddButtonTap()
-        {
-            await _navigationService.NavigateAsync(nameof(AddEditProfileView));
+            var profileList = await _profileManager.GetProfiles(Preferences.Get("UserId", 0));
 
-            var profileList = await _repository.GetAllAsync<ProfileModel>();
-
-            ProfileList = new ObservableCollection<ProfileModel>(profileList);
-        }
-        private async void OnUpdateTap()
-        {
-            if (SelectedItem != null)
+            if (profileList != null && profileList.Count > 0)
             {
-                var profileToUpdate = new ProfileModel()
-                {
-                    Id = SelectedItem.Id,
-                    Name = SelectedItem.Name,
-                    NickName = SelectedItem.NickName,
-                    ProfileImage = SelectedItem.ProfileImage,
-                    CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")
-                };
-
-
-                var index = ProfileList.IndexOf(SelectedItem);
-
-                ProfileList.Remove(SelectedItem);
-
-                await _repository.UpdateAsync(profileToUpdate);
-
-
-                ProfileList.Insert(index, profileToUpdate);
-
-                var profileList = await _repository.GetAllAsync<ProfileModel>();
-
-                ProfileList = new ObservableCollection<ProfileModel>(profileList);
+                profileList.ForEach(item => ProfileList.Add(item));
             }
+            return profileList;
         }
-        private async void OnDeleteTap()
-        {
-            if (await UserDialogs.Instance.ConfirmAsync("Are you sure you want to delete?", "Confirm action", "OK", "Cancel"))
-                if (SelectedItem != null)
-                {
-                    await _repository.DeleteAsync(SelectedItem);
-
-                    var profileList = await _repository.GetAllAsync<ProfileModel>();
-
-                    ProfileList = new ObservableCollection<ProfileModel>(profileList);
-                }
-        }
-
+ 
         #endregion
-
     }
 }
