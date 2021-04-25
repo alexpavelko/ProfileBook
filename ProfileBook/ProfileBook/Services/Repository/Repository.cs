@@ -17,30 +17,45 @@ namespace ProfileBook.Services.Repository
                 var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "profilebook.db3");
                 var database = new SQLiteAsyncConnection(path);
 
-                database.CreateTableAsync<ProfileModel>();
+                database.CreateTableAsync<Models.Profile>();
+
+                database.CreateTableAsync<Models.User>();
+
 
                 return database;
             });
         }
 
-        public async Task<int> DeleteAsync<T>(T entity) where T : IEntityBase, new()
+        public async Task DeleteAsync<T>(T entity) where T : IEntityBase, new()
         {
-            return await _database.Value.DeleteAsync(entity);
+            await _database.Value.DeleteAsync(entity);
         }
 
-        public async Task<List<T>> GetAllAsync<T>() where T : IEntityBase, new()
+        public async Task<List<T>> GetAllAsync<T>(int user_id) where T : IEntityBase, new()
         {
             return await _database.Value.Table<T>().ToListAsync();
         }
 
-        public async Task<int> InsertAsync<T>(T entity) where T : IEntityBase, new()
+        public async Task<List<T>> GetAllWithQueryAsync<T>(string sqlCommand) where T : IEntityBase, new()
         {
-            return await _database.Value.InsertAsync(entity);
+            return await _database.Value.QueryAsync<T>(sqlCommand);
         }
 
-        public async Task<int> UpdateAsync<T>(T entity) where T : IEntityBase, new()
+        public async Task AddAsync<T>(T entity) where T : IEntityBase, new()
         {
-            return await _database.Value.UpdateAsync(entity);
+            await _database.Value.InsertAsync(entity);
+        }
+
+        public async Task UpdateAsync<T>(T entity) where T : IEntityBase, new()
+        {
+            await _database.Value.UpdateAsync(entity);
+        }
+
+        public async Task AddOrUpdateAsync<T>(T entity) where T : IEntityBase, new()
+        {
+            if (entity.Id == 0)
+                 await AddAsync(entity);
+            else  await UpdateAsync(entity);
         }
     }
 }

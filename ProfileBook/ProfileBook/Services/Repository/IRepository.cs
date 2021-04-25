@@ -6,9 +6,11 @@ namespace ProfileBook.Services.Repository
 {
     public interface IRepository
     {
-        Task<int> InsertAsync<T>(T entity) where T : IEntityBase, new();
-        Task<int> UpdateAsync<T>(T entity) where T : IEntityBase, new();
-        Task<int> DeleteAsync<T>(T entity) where T : IEntityBase, new();
-        Task<List<T>> GetAllAsync<T>() where T : IEntityBase, new();
+        Task AddAsync<T>(T entity) where T : IEntityBase, new();
+        Task UpdateAsync<T>(T entity) where T : IEntityBase, new();
+        Task DeleteAsync<T>(T entity) where T : IEntityBase, new();
+        Task<List<T>> GetAllAsync<T>(int user_id) where T : IEntityBase, new();
+        Task<List<T>> GetAllWithQueryAsync<T>(string sqlCommand) where T : IEntityBase, new();
+        Task AddOrUpdateAsync<T>(T entity) where T : IEntityBase, new();
     }
 }
