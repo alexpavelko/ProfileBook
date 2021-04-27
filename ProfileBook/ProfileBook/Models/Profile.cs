@@ -18,7 +18,7 @@ namespace ProfileBook.Models
 
         public Profile()
         {
-            this.ProfileImage = "user_preson.png";
+            this.ProfileImage = "user_person.png";
             this.CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
             this.UserId = Preferences.Get($"{nameof(UserId)}", 0);
         }
