@@ -7,25 +7,6 @@
 
         <ResourceDictionary>
 
-            <Style x:Key="FrameStyle" TargetType="Frame">
-                <Setter Property="BackgroundColor" Value="#2196F3"></Setter>
-                <Setter Property="Padding" Value="0,14,0,14"></Setter>
-                <Setter Property="CornerRadius" Value="0"></Setter>
-                <Setter Property="Margin" Value="0,0,0,50"></Setter>
-            </Style>
-            
-            <Style x:Key="MainLabelStyle" TargetType="Label">
-                <Setter Property="HorizontalTextAlignment" Value="Center"></Setter>
-                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
-                <Setter Property="TextColor" Value="White"></Setter>
-                <Setter Property="FontSize" Value="Large"></Setter>
-            </Style>
-            
-            <Style x:Key="MainImageStyle" TargetType="Image">
-                <Setter Property="WidthRequest" Value="200"></Setter>
-                <Setter Property="HeightRequest" Value="200"></Setter>
-            </Style>
-
             <Style x:Key="EntryStyle" TargetType="Entry">
                 <Setter Property="FontSize" Value="Medium"></Setter>
                 <Setter Property="HeightRequest" Value="50"></Setter>
@@ -39,17 +20,15 @@
                 <Setter Property="FontSize" Value="Large"></Setter>
                 <Setter Property="FontAttributes" Value="Italic"></Setter>
             </Style>
-            
+
             <Style x:Key="HyperLinkStyle" TargetType="Label">
                 <Setter Property="TextColor" Value="Blue"></Setter>
                 <Setter Property="TextDecorations" Value="Underline"></Setter>
-                <Setter Property="FontSize" Value="Small"></Setter>
+                <Setter Property="FontSize" Value="Subtitle"></Setter>
                 <Setter Property="Margin" Value="0,25,0,50"></Setter>
                 <Setter Property="HorizontalOptions" Value="Center"></Setter>
             </Style>
 
-           
-            
         </ResourceDictionary>
 
     </prism:PrismApplication.Resources>

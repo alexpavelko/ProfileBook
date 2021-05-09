@@ -1,60 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProfileBook.Views.AddEditProfileView">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add Profile" />
+        <ToolbarItem />
+        <ToolbarItem />
+        <ToolbarItem IconImageSource="save_icon.png" Command="{Binding SaveCommand}"/>
+    </ContentPage.ToolbarItems>
+     
     <ScrollView>
         <StackLayout Background="White">
-
-            <Grid x:Name="ToolBar" HeightRequest="90" BackgroundColor="#2196F3">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-
-                <Label Text="Add Profile"                   
-                   Style="{StaticResource MainLabelStyle}"
-                   HorizontalOptions="Start"
-                   Margin="90,0,0,0"
-                   Grid.Column="0" Grid.Row="0"/>
-
-                <ImageButton Style="{StaticResource ImageButtonStyle}"                          
-                         Command="{Binding PreviousPageCommand}"                       
-                         Source="arrow_icon.png"
-                         HorizontalOptions="Start"
-                         Margin="20,0,0,0"
-                         Grid.Column="0" Grid.Row="0"/>
-
-                <ImageButton Style="{StaticResource ImageButtonStyle}"                          
-                         Command="{Binding SaveCommand}"
-                         Source="save_icon.png"                           
-                         Margin="0,0,20,0"
-                         Grid.Column="1" Grid.Row="0"/>
-
-            </Grid>
-
-            <ImageButton Source="{Binding ProfileImage}"
-                         BackgroundColor="White"
+            <ffimageloading:CachedImage HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        HeightRequest="50"
+                                        LoadingPlaceholder="{Binding ProfileImage}">
+            </ffimageloading:CachedImage>
+            <ImageButton Source="{Binding CurrentProfile.ProfileImage}"
+                         BackgroundColor="Transparent"                        
                          WidthRequest="200"
-                         HeightRequest="200"
+                         HeightRequest="200"                       
                          Command="{Binding ProfileImageClickCommand}"/>
 
-            <StackLayout x:Name="UserControlsStack" Margin="0,50,0,0">
+            <StackLayout Margin="0,50,0,0">
 
-                <Entry x:Name="EntryNickName"
-                    Text="{Binding NickName}"
+                <Entry Text="{Binding CurrentProfile.NickName}"
                     Margin="40,0,40,0"
                     Placeholder="NickName"              
                     Style="{StaticResource EntryStyle}"/>
 
-                <Entry x:Name="EntryName"
-                    Text="{Binding Name}"
+                <Entry Text="{Binding CurrentProfile.Name}"
                     Placeholder="Name"
                     Margin="40,0,40,0"
                     Style="{StaticResource EntryStyle}"/>
 
                 <Editor Placeholder="Description"
-                    Text="{Binding Description}"
+                    Text="{Binding CurrentProfile.Description}"
                     HeightRequest="150"
                     Background="#d4d4d4"
                     Margin="40,60,40,0" />

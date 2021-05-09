@@ -1,36 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" Title="Users SignUp"
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" Title="Sign up"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProfileBook.Views.SignUpView">
     <ScrollView>
         <StackLayout x:Name="MainStack">
-            <Frame Style="{StaticResource FrameStyle}">
-                <Label Text="Users SignUp" Style="{StaticResource MainLabelStyle}"/>
-            </Frame>
-            <Image Source="user_add.png" Style="{StaticResource MainImageStyle}"/>
-            <StackLayout x:Name="UserControlsStack" Margin="0,50,0,0">
+            <Image Source="user_add.png" Margin="0,50,0,0" HeightRequest="200"/>
+            <StackLayout Margin="0,50,0,0">
                 <StackLayout Orientation="Horizontal">
                     <Image Source="user_login.png" />
-                    <Entry x:Name="loginEntry"
+                    <Entry Text="{Binding Login}"
                             Placeholder="Login"              
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Image Source="user_password.png"/>
-                    <Entry x:Name="passwordEntry" 
+                    <Entry Text="{Binding Password}"
                             Placeholder="Password"
                             IsPassword="True"           
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Image Source="key_icon.png"/>
-                    <Entry x:Name="passwordConfirmEntry" 
+                    <Entry Text="{Binding ConfirmPassword}"
                             Placeholder="Confirm Password"
                             IsPassword="True"           
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
                 <Button Text="SIGN UP"              
-                            Command="{Binding UserSignUpCommand}"     
+                            Command="{Binding SignUpCommand}"     
                             Style="{StaticResource ButtonStyle}"/>
                 <Button Text="Back"              
                             Command="{Binding BackCommand}"     
