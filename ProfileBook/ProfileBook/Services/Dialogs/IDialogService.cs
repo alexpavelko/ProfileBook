@@ -1,4 +1,6 @@
-﻿namespace ProfileBook.Services.Dialogs
+﻿using System.Threading.Tasks;
+
+namespace ProfileBook.Services.Dialogs
 {
     public interface IDialogService
     {

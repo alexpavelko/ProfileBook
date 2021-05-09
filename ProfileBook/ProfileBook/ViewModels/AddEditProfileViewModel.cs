@@ -1,123 +1,91 @@
-﻿using System;
-using Xamarin.Forms;
-using Prism.Mvvm;
+﻿using Xamarin.Forms;
 using System.Windows.Input;
 using Prism.Navigation;
 using ProfileBook.Views;
-using ProfileBook.Validators;
 using Acr.UserDialogs;
-using Xamarin.Essentials;
-using System.IO;
 using ProfileBook.Services.Profile;
 using ProfileBook.Models;
+using ProfileBook.Services.Settings;
+using ProfileBook.Dialogs;
+using System;
+using ProfileBook.Services.Validators;
 
 namespace ProfileBook.ViewModels
 {
     class AddEditProfileViewModel : BaseViewModel
     {
-        private Profile CurrentProfile { get; set; }
+        public Profile CurrentProfile { get; set; }
         private IProfileManager _profileManager;
+        private ISettingsManager _settingsManager;
 
         public AddEditProfileViewModel(INavigationService navigationService,
-            IProfileManager profileManager) : base(navigationService)
+            IProfileManager profileManager,
+            ISettingsManager settingsManager) : base(navigationService)
         {
             this._profileManager = profileManager;
+            this._settingsManager = settingsManager;
         }
 
-        #region --- Properties---
-      
-        private string _profileImage;
-        public string ProfileImage
-        {
-            get => _profileImage;
-            set => SetProperty(ref _profileImage, value);
-        }
+        #region --- Commands ---
 
-        private string _nickName;
-        public string NickName
-        {
-            get => _nickName;
-            set => SetProperty(ref _nickName, value);
-        }
-
-        private string _name;
-        public string Name
-        {
-            get => _name;
-            set => SetProperty(ref _name, value);
-        }
-
-        private string _description;
-        public string Description
-        {
-            get => _description;
-            set => SetProperty(ref _description, value);
-        }
+        public ICommand PreviousPageCommand => new Command(Back);
+        public ICommand ProfileImageClickCommand => new Command(ClickImage);
+        public ICommand SaveCommand => new Command(Save);
 
         #endregion
 
-        #region --- Comands ---
+        #region --- Overrides ---
 
-        public ICommand PreviousPageCommand => new Command(async () => {
-            await NavigationService.NavigateAsync(nameof(MainListView));
-        });
+        public override void Initialize(INavigationParameters parameters)
+        {
+            base.Initialize(parameters);
+            if (CurrentProfile == null)
+                this.CurrentProfile = new Profile();
+            CurrentProfile.CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+            CurrentProfile.ProfileImage = "user_person.png";
+        }
 
-        public ICommand SaveCommand => new Command(async () => {
-            string errorMessage = ProfileValidator.IsProfileValid(CurrentProfile);
-            bool isValid = string.IsNullOrEmpty(errorMessage);
+        public override void OnNavigatedTo(INavigationParameters parameters)
+        {
+            base.OnNavigatedTo(parameters);
 
-            if(!isValid)
-            UserDialogs.Instance.Alert(errorMessage, "Error", "Ok");
-
-            await _profileManager.SaveProfile(CurrentProfile);
-        });
-
-        public ICommand ProfileImageClickCommand => new Command(() => {
-            UserDialogs.Instance.ActionSheet(new ActionSheetConfig()
-                                .SetTitle("Choose Action")
-                                .Add("Pick at Gallery", () => GetPhotoAsync(), "gallery_icon.png")
-                                .Add("Take photo with camera", () => TakePhotoAsync(), "camera_icon.png")
-                            );
-        });
+            parameters.TryGetValue("Profile", out Profile profile);
+            if (profile != null)
+                CurrentProfile = profile;
+            RaisePropertyChanged(nameof(CurrentProfile));
+        }
 
         #endregion
 
         #region --- Private Helpers ---
-        private async void GetPhotoAsync()
-        {
-            try
-            {
-                var photo = await MediaPicker.PickPhotoAsync();
 
-                ProfileImage = photo.FullPath;
-            }
-            catch (Exception ex)
-            {
-                await UserDialogs.Instance.AlertAsync(ex.Message, "Error", "OK");
-            }
+        private async void Back()
+        {
+            await NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(MainListView)}");
         }
 
-        private async void TakePhotoAsync()
+
+        private void ClickImage()
         {
-            try
+            var pickImageDialog = new PickImageDialog();
+
+            pickImageDialog.ChoosePhoto(CurrentProfile);
+
+            RaisePropertyChanged(nameof(CurrentProfile));
+        }
+
+        private async void Save()
+        {
+            string errorMessage = Validator.IsProfileValid(CurrentProfile);
+            bool isValid = string.IsNullOrEmpty(errorMessage);
+
+            if (!isValid)
+                UserDialogs.Instance.Alert(errorMessage, "Error", "Ok");
+            else
             {
-                var photo = await MediaPicker.CapturePhotoAsync(new MediaPickerOptions
-                {
-                    Title = $"xamarin.{DateTime.Now.ToString("dd.MM.yyyy_hh.mm.ss")}.png"
-                });
+                await _profileManager.SaveProfile(CurrentProfile);
 
-
-                var newFile = Path.Combine(FileSystem.AppDataDirectory, photo.FileName);
-                using (var stream = await photo.OpenReadAsync())
-                using (var newStream = File.OpenWrite(newFile))
-                    await stream.CopyToAsync(newStream);
-
-
-                ProfileImage = photo.FullPath;
-            }
-            catch (Exception ex)
-            {
-                await UserDialogs.Instance.AlertAsync(ex.Message, "Error", "OK");
+                await NavigationService.NavigateAsync(nameof(MainListView));
             }
         }
 

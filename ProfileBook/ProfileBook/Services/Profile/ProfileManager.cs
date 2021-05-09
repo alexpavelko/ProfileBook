@@ -8,14 +8,14 @@ namespace ProfileBook.Services.Profile
 {
     public class ProfileManager : IProfileManager
     {
-        private IRepository _repository;
+        private IRepository  _repository;
         public ProfileManager(IRepository repository)
         {
             this._repository = repository;
         }
         public async Task<List<Models.Profile>> GetProfiles(int user_id)
         {
-            string sqlCommand = $"$SELECT * FROM Profiles WHERE UserId = {user_id}";
+            string sqlCommand = $"SELECT * FROM Profiles WHERE UserId={user_id}";
             return await _repository.GetAllWithQueryAsync<Models.Profile>(sqlCommand);
         }
 

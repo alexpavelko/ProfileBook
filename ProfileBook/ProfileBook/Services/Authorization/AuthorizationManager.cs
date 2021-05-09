@@ -17,7 +17,7 @@ namespace ProfileBook.Services.Authorization
         public async Task<bool> SignIn(string login, string password)
         {
             string sqlCommand = $"SELECT * FROM Users WHERE Login='{login}' AND Password='{password}'";
-            User user = await _repository.FindWithCommand<User>(sqlCommand);
+            User user = await _repository.FindWithCommandAsync<User>(sqlCommand);
             if(user != null)
             {
                 _settingsManager.UserId = user.Id;
@@ -29,7 +29,7 @@ namespace ProfileBook.Services.Authorization
         {
             string sqlCommand = $"SELECT * FROM Users WHERE Login='{login}' AND Password='{password}'";
 
-            User user = await _repository.FindWithCommand<User>(sqlCommand);
+            User user = await _repository.FindWithCommandAsync<User>(sqlCommand);
             if (user != null)
                 return false;
 

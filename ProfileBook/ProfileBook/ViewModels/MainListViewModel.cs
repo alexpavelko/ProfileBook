@@ -1,19 +1,13 @@
 ﻿using Xamarin.Forms;
-using Prism.Mvvm;
 using System.Windows.Input;
 using Prism.Navigation;
 using ProfileBook.Views;
 using System.Collections.ObjectModel;
 using ProfileBook.Models;
 using ProfileBook.Services.Settings;
-using System;
-using ProfileBook.Services.Repository;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
-using System.ComponentModel;
 using ProfileBook.Services.Profile;
-using Xamarin.Essentials;
-using System.Collections.Generic;
 
 namespace ProfileBook.ViewModels
 {
@@ -23,7 +17,12 @@ namespace ProfileBook.ViewModels
         private IProfileManager _profileManager;
 
         #region --- Properties ---
-
+        private string _btnAdd;
+        public string BtnAddIsVisible
+        {
+            get => _btnAdd;
+            set => SetProperty(ref _btnAdd, value);
+        }
         private Profile _selectedItem;
         public Profile SelectedItem
         {
@@ -68,65 +67,95 @@ namespace ProfileBook.ViewModels
         }
 
         #endregion
-
         public MainListViewModel(INavigationService navigationService,
-                               ProfileManager profileManager,
-                                 ISettingsManager settingsManager) : base(navigationService)
+                               IProfileManager profileManager,
+                               ISettingsManager settingsManager
+                                 ) : base(navigationService)
         {
-            _settingsManager = settingsManager;
             _profileManager = profileManager;
+            _settingsManager = settingsManager;
         }
 
-        #region --- Comands ---
-        public ICommand LogOutCommand => new Command(async () => {
-            //TODO: Users.Delete(userId) разлогинивание
-            await NavigationService.NavigateAsync(nameof(SignInView));
-        });
+        #region --- Commands ---
+        public ICommand LogOutCommand => new Command(Logout);
 
-        public ICommand AddProfileCommand => new Command(async () => {
+        public ICommand AddProfileCommand => new Command(Add);
+
+        public ICommand UpdateCommand => new Command(Update);
+
+        public ICommand DeleteCommand => new Command(Delete);
+
+        #endregion
+
+        #region --- Overrides ---
+        public override void Initialize(INavigationParameters parameters)
+        {
+            base.Initialize(parameters);
+
+            ProfileList = new ObservableCollection<Profile>();
+        }
+        public override async void OnNavigatedTo(INavigationParameters parameters)
+        {
+            BtnAddIsVisible = "False";
+
+            await LoadUsers();
+
+            BtnAddIsVisible = "True";
+        }
+
+        #endregion
+
+        #region --- Private Helpers ---
+
+        private async Task LoadUsers()
+        {
+            this.ProfileList.Clear();
+
+            var profiles = await _profileManager.GetProfiles(_settingsManager.UserId);
+
+            if (profiles != null)
+            {
+                profiles.ForEach(item => this.ProfileList.Add(item));
+                ProfileList = new ObservableCollection<Profile>(profiles);
+            }
+        }
+
+        private async void Logout()
+        {
+            _settingsManager.UserId = -1;
+            await NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignInView)}");
+        }
+
+        private async void Add()
+        {
             await NavigationService.NavigateAsync(nameof(AddEditProfileView));
-        });
+            RaisePropertyChanged(nameof(ProfileList));
+        }
 
-        public ICommand UpdateCommand => new Command(async ()=> {
-        if (SelectedItem != null)
+        private async void Update()
+        {
+            if (SelectedItem != null)
             {
                 var parameters = new NavigationParameters()
                {
                    { "Profile", SelectedItem }
                };
-                await NavigationService.NavigateAsync(nameof(AddEditProfileView),parameters);
+                await NavigationService.NavigateAsync(nameof(AddEditProfileView), parameters);
+                RaisePropertyChanged(nameof(ProfileList));
             }
-        });
-        public ICommand DeleteCommand => new Command(async () => {
+
+        }
+
+        private async void Delete()
+        {
             bool isConfirmed = await UserDialogs.Instance.ConfirmAsync("Are you sure you want to delete?", "Confirm action", "OK", "Cancel");
             if (SelectedItem != null && isConfirmed)
             {
                 await _profileManager.RemoveProfile(SelectedItem);
+                ProfileList.Remove(SelectedItem);
             }
-        });
-
-        #endregion
-
-        public async Task InitializeAsync(INavigationParameters parameters)
-        {
-            ProfileList =  new ObservableCollection<Profile> (await GetProfiles());
         }
 
-        #region --- Private Helpers ---
-
-        private async Task<List<Profile>> GetProfiles()
-        {
-            ProfileList.Clear();
-
-            var profileList = await _profileManager.GetProfiles(Preferences.Get("UserId", 0));
-
-            if (profileList != null && profileList.Count > 0)
-            {
-                profileList.ForEach(item => ProfileList.Add(item));
-            }
-            return profileList;
-        }
- 
         #endregion
     }
 }
