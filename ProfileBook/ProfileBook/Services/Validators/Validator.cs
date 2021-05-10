@@ -41,13 +41,13 @@ namespace ProfileBook.Services.Validators
         {
             if (!Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$"))
             {
-                errorMessage += "Passsword:\n * Minimum 8 chars, maximum 16 chars.\n * At least 1 uppercase letter, 1 lowercase letter and 1 number\n";
+                errorMessage = "Passsword:\n * Minimum 8 chars, maximum 16 chars.\n * At least 1 uppercase letter, 1 lowercase letter and 1 number\n";
                 return false;
             }
 
             if (!confirmPassword.Equals(password))
             {
-                errorMessage += "Confirm password:\n * Must match the password\n";
+                errorMessage = "Confirm password:\n * Must match the password\n";
                 return false;
             }
             return true;

@@ -9,5 +9,10 @@ namespace ProfileBook.Services.Settings
             get => Preferences.Get(nameof(UserId), -1);
             set => Preferences.Set(nameof(UserId), value); 
         }
+
+        public void ChangeUserId(int userId)
+        {
+            Preferences.Set(nameof(UserId), userId);
+        }
     }
 }

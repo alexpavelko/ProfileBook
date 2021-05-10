@@ -3,5 +3,6 @@
     public interface ISettingsManager
     {
         int UserId { get; set; }
+        void ChangeUserId(int userId);
     }
 }

@@ -4,6 +4,7 @@ using ProfileBook.Models;
 using ProfileBook.Services.Authorization;
 using ProfileBook.Services.Settings;
 using ProfileBook.Views;
+using System.ComponentModel;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -13,14 +14,30 @@ namespace ProfileBook.ViewModels
     {
         private IAuthorizationManager _authorizationManager;
         private ISettingsManager _settingsManager;
-        public User User { get; set; }
 
+        #region --- Properties --- 
+        
+        private string _password;
+        public string Password
+        {
+            get => _password;
+            set => SetProperty(ref _password, value);
+        }
+
+        private string _login;
+        public string Login
+        {
+            get => _login;
+            set => SetProperty(ref _login, value);
+        }
+
+        #endregion
         public SignInViewModel(INavigationService navigationService,
             IAuthorizationManager authorizationManager,
             ISettingsManager settingsManager) : base(navigationService)
         {
             _authorizationManager = authorizationManager;
-            _settingsManager = settingsManager;           
+            _settingsManager = settingsManager;
         }
 
         #region --- Commands ---
@@ -36,14 +53,15 @@ namespace ProfileBook.ViewModels
         public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
-            if (User == null) User = new User();
         }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
-            parameters.TryGetValue("User", out User user);
-            this.User = user;
+            parameters.TryGetValue("password", out string password);
+            this.Password = password;
+            parameters.TryGetValue("login", out string login);
+            this.Login = login;
         }
 
         #endregion
@@ -52,17 +70,19 @@ namespace ProfileBook.ViewModels
 
         private async void Register()
         {
-            await NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignUpView)}");
+            await NavigationService.NavigateAsync(nameof(SignUpView));
         }
 
         private async void SignIn()
         {
-            if (await _authorizationManager.SignIn(User.Login, User.Password) == true)
-            {
-                _settingsManager.UserId = User.Id;
-                await UserDialogs.Instance.AlertAsync($"Successful SignIn!", "Successful", "Ok");
+            User user = new User();
+            user.Login = Login;
+            user.Password = Password;
 
-                await NavigationService.NavigateAsync(nameof(MainListView));
+            if (await _authorizationManager.SignIn(user.Login, user.Password) == true)
+            {
+                if (user.Id != -1)
+                    await NavigationService.NavigateAsync(nameof(MainListView));
             }
             else await UserDialogs.Instance.AlertAsync("Login or password wrong", "Error login or password");
         }

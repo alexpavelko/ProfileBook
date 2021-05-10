@@ -20,7 +20,7 @@ namespace ProfileBook.Services.Authorization
             User user = await _repository.FindWithCommandAsync<User>(sqlCommand);
             if(user != null)
             {
-                _settingsManager.UserId = user.Id;
+               _settingsManager.ChangeUserId(user.Id);
                 return true;
             }
             return false;

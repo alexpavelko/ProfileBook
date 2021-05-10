@@ -67,7 +67,8 @@ namespace ProfileBook.ViewModels
                     await UserDialogs.Instance.AlertAsync("Successful Registration!", "Successful", "Ok");
                     var parameters = new NavigationParameters
                     {
-                        {"User", user }
+                        {"login", user.Login },
+                        {"password", user.Password }
                     };
                     await NavigationService.NavigateAsync(nameof(SignInView), parameters);
                 }

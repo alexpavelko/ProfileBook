@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" Title="Sign up"
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProfileBook.Views.SignUpView">
+
+    <NavigationPage.TitleView>
+        <Label Text="Sign up" HorizontalOptions="Center" TextColor="White" FontSize="Medium" />
+    </NavigationPage.TitleView>
+
     <ScrollView>
         <StackLayout x:Name="MainStack">
             <Image Source="user_add.png" Margin="0,50,0,0" HeightRequest="200"/>

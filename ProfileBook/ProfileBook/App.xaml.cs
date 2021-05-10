@@ -19,8 +19,8 @@ namespace ProfileBook
         protected override void OnInitialized()
         {
             InitializeComponent();
-
-            ISettingsManager settingsManager = new SettingsManager();          
+            
+            ISettingsManager settingsManager = new SettingsManager();
             if (settingsManager.UserId != -1)
             {
                 NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(MainListView)}");

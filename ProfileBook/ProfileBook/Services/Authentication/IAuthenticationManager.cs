@@ -2,7 +2,6 @@
 {
     public interface IAuthenticationManager 
     {
-        //Task<bool> isAuthorized;
-        //Task<bool> outAuthorized;
+        bool outAuthorized();
     }
 }

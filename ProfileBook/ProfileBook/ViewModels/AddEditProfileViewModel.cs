@@ -61,7 +61,7 @@ namespace ProfileBook.ViewModels
 
         private async void Back()
         {
-            await NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(MainListView)}");
+            await NavigationService.NavigateAsync(nameof(MainListView));
         }
 
 

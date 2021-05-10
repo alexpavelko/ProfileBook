@@ -8,6 +8,7 @@ using ProfileBook.Services.Settings;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using ProfileBook.Services.Profile;
+using ProfileBook.Services.Authentication;
 
 namespace ProfileBook.ViewModels
 {
@@ -15,6 +16,7 @@ namespace ProfileBook.ViewModels
     {
         private ISettingsManager _settingsManager;
         private IProfileManager _profileManager;
+        private IAuthenticationManager _authenticationManager;
 
         #region --- Properties ---
         private string _btnAdd;
@@ -69,11 +71,14 @@ namespace ProfileBook.ViewModels
         #endregion
         public MainListViewModel(INavigationService navigationService,
                                IProfileManager profileManager,
-                               ISettingsManager settingsManager
+                               ISettingsManager settingsManager,
+                               IAuthenticationManager authenticationManager
                                  ) : base(navigationService)
         {
             _profileManager = profileManager;
             _settingsManager = settingsManager;
+            _authenticationManager = authenticationManager;
+            UserDialogs.Instance.AlertAsync("\nSettingM = " + settingsManager.UserId, "ok", "ok");
         }
 
         #region --- Commands ---
@@ -122,8 +127,8 @@ namespace ProfileBook.ViewModels
 
         private async void Logout()
         {
-            _settingsManager.UserId = -1;
-            await NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignInView)}");
+            if(!_authenticationManager.outAuthorized())
+                await NavigationService.NavigateAsync(nameof(SignInView));
         }
 
         private async void Add()
