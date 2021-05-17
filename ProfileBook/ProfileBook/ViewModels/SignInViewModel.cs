@@ -1,10 +1,8 @@
 ﻿using Acr.UserDialogs;
 using Prism.Navigation;
-using ProfileBook.Models;
-using ProfileBook.Services.Authorization;
+using ProfileBook.Services.Authentication;
 using ProfileBook.Services.Settings;
 using ProfileBook.Views;
-using System.ComponentModel;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -12,7 +10,8 @@ namespace ProfileBook.ViewModels
 {
     public class SignInViewModel : BaseViewModel
     {
-        private IAuthorizationManager _authorizationManager;
+       
+        private IAuthenticationService _authenticationService;
         private ISettingsManager _settingsManager;
 
         #region --- Properties --- 
@@ -33,27 +32,22 @@ namespace ProfileBook.ViewModels
 
         #endregion
         public SignInViewModel(INavigationService navigationService,
-            IAuthorizationManager authorizationManager,
+            IAuthenticationService authenticationService,
             ISettingsManager settingsManager) : base(navigationService)
         {
-            _authorizationManager = authorizationManager;
+            _authenticationService = authenticationService;
             _settingsManager = settingsManager;
         }
 
         #region --- Commands ---
 
-        public ICommand SignUpCommand => new Command(Register);
+        public ICommand SignUpCommand => new Command(SignUp);
 
         public ICommand UserSignInCommand => new Command(SignIn);
 
         #endregion
 
         #region --- Overrides ---
-
-        public override void Initialize(INavigationParameters parameters)
-        {
-            base.Initialize(parameters);
-        }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
@@ -68,24 +62,25 @@ namespace ProfileBook.ViewModels
 
         #region --- Private Helpers ---
 
-        private async void Register()
+        private async void SignUp()
         {
             await NavigationService.NavigateAsync(nameof(SignUpView));
         }
 
         private async void SignIn()
         {
-            User user = new User();
-            user.Login = Login;
-            user.Password = Password;
+            var signInResult = await _authenticationService.SignIn(Login, Password);
 
-            if (await _authorizationManager.SignIn(user.Login, user.Password) == true)
+            if (signInResult == true)
             {
-                if (user.Id != -1)
-                    await NavigationService.NavigateAsync(nameof(MainListView));
+                await NavigationService.NavigateAsync(nameof(MainListView));
             }
-            else await UserDialogs.Instance.AlertAsync("Login or password wrong", "Error login or password");
+            else
+            {
+                await UserDialogs.Instance.AlertAsync("Login or password wrong", "Error login or password", "Ok");
+            }
         }
+
         #endregion
     }
 }

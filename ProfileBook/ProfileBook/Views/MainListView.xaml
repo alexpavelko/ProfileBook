@@ -1,60 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ProfileBook.Views.MainListView">
+             x:Class="ProfileBook.Views.MainListView" x:Name="MainPage"
+             NavigationPage.HasBackButton="False">
+    
+    <NavigationPage.TitleView>
+        <Label Text="Main List" TextColor="White" FontSize="Medium" />
+    </NavigationPage.TitleView>
+    
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Main List" />
-        <ToolbarItem />
         <ToolbarItem IconImageSource="log_out.png" Command="{Binding LogOutCommand}" />
         <ToolbarItem IconImageSource="settings_icon.png" Command="{Binding SettingsCommand}"/>
     </ContentPage.ToolbarItems>
-    <StackLayout x:Name="MainStackLayout">
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-                <ScrollView>
-                <ListView Grid.Row="0" ItemsSource="{Binding ProfileList}"                            
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollView>
+            <ListView Grid.Row="0" ItemsSource="{Binding ProfileList}"                            
                               RowHeight="150"
                               SelectedItem="{Binding SelectedItem}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <ViewCell.ContextActions>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.ContextActions>
 
-                                    <MenuItem Text="EDIT"                                                 
-                                                  Command="{Binding Path=BindingContext.UpdateCommand,  Source={x:Reference MainStackLayout}}"
+                                <MenuItem Text="EDIT"                                                 
+                                                  Command="{Binding Path=BindingContext.UpdateCommand,  Source={x:Reference MainPage}}"
                                                   CommandParameter="{Binding .}"  />
 
-                                    <MenuItem Text="DELETE"
-                                                  Command="{Binding Path=BindingContext.DeleteCommand,  Source={x:Reference MainStackLayout}}"
+                                <MenuItem Text="DELETE"
+                                                  Command="{Binding Path=BindingContext.DeleteCommand,  Source={x:Reference MainPage}}"
                                                   CommandParameter="{Binding .}" IsDestructive="True" />
 
-                                </ViewCell.ContextActions>
-                                <ViewCell.View>
-                                    <Grid>
-                                        <Image Source="{Binding ProfileImage}" Grid.Column="0" Grid.Row="0"/>
-                                        <Label  Text="{Binding NickName}" Style="{StaticResource LabelStyle}"  FontSize="Title" Margin="0,20,0,0" />
-                                        <Label Text="{Binding Name}"  Style="{StaticResource LabelStyle}" Margin="0,60,0,0"/>
-                                        <Label Text="{Binding CreationTime}" Style="{StaticResource LabelStyle}" Margin="0,100,0,0" />
-                                    </Grid>
-                                </ViewCell.View>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollView>
-            <Button Grid.Row="0" IsVisible="{Binding BtnAddIsVisible}"
+                            </ViewCell.ContextActions>
+                            <ViewCell.View>
+                                <Grid>
+                                    <Image Source="{Binding ProfileImage}" Grid.Column="0" Grid.Row="0"/>
+                                    <Label  Text="{Binding NickName}" Style="{StaticResource LabelStyle}"  FontSize="Title" Margin="0,20,0,0" />
+                                    <Label Text="{Binding Name}"  Style="{StaticResource LabelStyle}" Margin="0,60,0,0"/>
+                                    <Label Text="{Binding CreationTime}" Style="{StaticResource LabelStyle}" Margin="0,100,0,0" />
+                                </Grid>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollView>
+        <Button Grid.Row="0" IsVisible="{Binding BtnAddIsVisible}"
                     Text="Add" FontAttributes="Bold" BorderColor="#4780ae"
                     BorderWidth="5" BackgroundColor="#cbe3fe"
                     BorderRadius="30" TextColor="#315673"
                     HorizontalOptions="End" WidthRequest="60" HeightRequest="60"
                     Margin="0,0,20,90" VerticalOptions="End"
                     Command="{Binding AddProfileCommand}"/>
-        </Grid>
-
-    </StackLayout>
+    </Grid>
 
     <ContentPage.Resources>
 

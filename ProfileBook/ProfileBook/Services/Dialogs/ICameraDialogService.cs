@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-
-namespace ProfileBook.Services.Dialogs
+﻿namespace ProfileBook.Services.Dialogs
 {
-    public interface IDialogService
+    public interface ICameraDialogService
     {
         void GetPhotoAsync(Models.Profile CurrentProfile);
         void TakePhotoAsync(Models.Profile CurrentProfile);

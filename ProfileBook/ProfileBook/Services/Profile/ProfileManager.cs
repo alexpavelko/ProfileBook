@@ -1,21 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-
 using ProfileBook.Services.Repository;
+using ProfileBook.Services.Settings;
 
 namespace ProfileBook.Services.Profile
 {
     public class ProfileManager : IProfileManager
     {
         private IRepository  _repository;
-        public ProfileManager(IRepository repository)
+        private ISettingsManager _settingsManager;
+
+        public ProfileManager(IRepository repository, ISettingsManager settingsManager)
         {
-            this._repository = repository;
+            _repository = repository;
+            _settingsManager = settingsManager;
         }
-        public async Task<List<Models.Profile>> GetProfiles(int user_id)
+
+        public async Task<List<Models.Profile>> GetProfiles()
         {
-            string sqlCommand = $"SELECT * FROM Profiles WHERE UserId={user_id}";
+            var currentUserId = _settingsManager.UserId;
+
+            string sqlCommand = $"SELECT * FROM Profiles WHERE UserId={currentUserId}";
+
             return await _repository.GetAllWithQueryAsync<Models.Profile>(sqlCommand);
         }
 
@@ -29,7 +36,11 @@ namespace ProfileBook.Services.Profile
 
         public async Task SaveProfile(Models.Profile profile)
         {
-            await _repository.AddOrUpdateAsync(profile);
+            var profileToSave = profile;
+
+            profile.UserId = _settingsManager.UserId;
+
+            await _repository.AddOrUpdateAsync(profileToSave);
         }
     }
 }

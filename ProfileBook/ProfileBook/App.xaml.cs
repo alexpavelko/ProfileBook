@@ -14,14 +14,18 @@ namespace ProfileBook
 {
     public partial class App : PrismApplication
     {
+        private IAuthorizationService _authorizationService;
+        public IAuthorizationService AuthorizationService =>
+            _authorizationService ?? Container.Resolve<IAuthorizationService>();
         public App() { }
         #region ---Overrides--
         protected override void OnInitialized()
         {
             InitializeComponent();
-            
-            ISettingsManager settingsManager = new SettingsManager();
-            if (settingsManager.UserId != -1)
+
+            var isAuthorize = AuthorizationService.IsAuthorize();
+
+            if (isAuthorize == true)
             {
                 NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(MainListView)}");
             }
@@ -32,11 +36,12 @@ namespace ProfileBook
         {
             //Services
             containerRegistry.RegisterInstance<IRepository>(Container.Resolve<Repository>());
-            containerRegistry.RegisterInstance<IProfileManager>(Container.Resolve<ProfileManager>());
             containerRegistry.RegisterInstance<ISettingsManager>(Container.Resolve<SettingsManager>());
-            containerRegistry.RegisterInstance<IDialogService>(Container.Resolve<DialogService>());
-            containerRegistry.RegisterInstance<IAuthorizationManager>(Container.Resolve<AuthorizationManager>());
-            containerRegistry.RegisterInstance<IAuthenticationManager>(Container.Resolve<AuthenticationManager>());
+            containerRegistry.RegisterInstance<IProfileManager>(Container.Resolve<ProfileManager>());
+            
+            containerRegistry.RegisterInstance<ICameraDialogService>(Container.Resolve<CameraDialogService>());
+            containerRegistry.RegisterInstance<IAuthorizationService>(Container.Resolve<AuthorizationService>());
+            containerRegistry.RegisterInstance<IAuthenticationService>(Container.Resolve<AuthenticationService>());
 
             //Navigation
             containerRegistry.RegisterForNavigation<NavigationPage>();

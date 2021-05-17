@@ -1,11 +1,11 @@
-﻿using Acr.UserDialogs;
+﻿ using Acr.UserDialogs;
 using System;
 using System.IO;
 using Xamarin.Essentials;
 
 namespace ProfileBook.Services.Dialogs
 {
-    public class DialogService : IDialogService
+    public class CameraDialogService : ICameraDialogService
     {
         public async void GetPhotoAsync(Models.Profile CurrentProfile)
         {

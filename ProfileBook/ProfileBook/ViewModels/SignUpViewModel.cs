@@ -2,7 +2,6 @@
 using Prism.Navigation;
 using ProfileBook.Models;
 using ProfileBook.Services.Authentication;
-using ProfileBook.Services.Authorization;
 using ProfileBook.Services.Validators;
 using ProfileBook.Views;
 using System.Windows.Input;
@@ -12,7 +11,7 @@ namespace ProfileBook.ViewModels
 {
     public class SignUpViewModel : BaseViewModel
     {
-        private IAuthorizationManager _authorizationManager;
+        private IAuthenticationService _authenticationService;
 
         #region --- Properties ---
         private string _login;
@@ -38,9 +37,9 @@ namespace ProfileBook.ViewModels
         #endregion
         
         public SignUpViewModel(INavigationService navigationService,
-            IAuthorizationManager authorizationManager) : base(navigationService)
+            IAuthenticationService authenticationService) : base(navigationService)
         {
-            _authorizationManager = authorizationManager;
+            _authenticationService = authenticationService;
         }
 
         #region --- Commands ---
@@ -59,12 +58,19 @@ namespace ProfileBook.ViewModels
 
         private async void Register()
         {
-            if (Validator.IsLoginValid(Login) &&
-           Validator.IsPasswordValid(Password, ConfirmPassword))
-                if (await _authorizationManager.RegisterUser(Login, Password))
+            var isValid = Validator.IsLoginValid(Login) &&
+           Validator.IsPasswordValid(Password, ConfirmPassword);
+
+            if (isValid)
+            {
+                var signUpResult = await _authenticationService.SignUp(Login, Password);
+
+                if (signUpResult)
                 {
                     User user = new User { Login = Login, Password = Password };
+
                     await UserDialogs.Instance.AlertAsync("Successful Registration!", "Successful", "Ok");
+                    
                     var parameters = new NavigationParameters
                     {
                         {"login", user.Login },
@@ -72,9 +78,19 @@ namespace ProfileBook.ViewModels
                     };
                     await NavigationService.NavigateAsync(nameof(SignInView), parameters);
                 }
-                else await UserDialogs.Instance.AlertAsync("Login is already takern!", "Sign up", "Ok");
-            else await UserDialogs.Instance.AlertAsync(Validator.errorMessage, "Sign in", "Ok");
+
+                else
+                {
+                    await UserDialogs.Instance.AlertAsync("Login is already takern!", "Sign up", "Ok");
+                }
+            }
+
+            else
+            {
+                await UserDialogs.Instance.AlertAsync(Validator.errorMessage, "Sign in", "Ok");
+            }
         }
+
         #endregion
     }
 }

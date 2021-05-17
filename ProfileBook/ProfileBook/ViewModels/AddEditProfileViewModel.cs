@@ -5,44 +5,67 @@ using ProfileBook.Views;
 using Acr.UserDialogs;
 using ProfileBook.Services.Profile;
 using ProfileBook.Models;
-using ProfileBook.Services.Settings;
-using ProfileBook.Dialogs;
 using System;
 using ProfileBook.Services.Validators;
+using ProfileBook.Services.Dialogs;
 
 namespace ProfileBook.ViewModels
 {
     class AddEditProfileViewModel : BaseViewModel
-    {
-        public Profile CurrentProfile { get; set; }
+    {       
         private IProfileManager _profileManager;
-        private ISettingsManager _settingsManager;
+        private ICameraDialogService _dialogService;
 
         public AddEditProfileViewModel(INavigationService navigationService,
-            IProfileManager profileManager,
-            ISettingsManager settingsManager) : base(navigationService)
+            IProfileManager profileManager, CameraDialogService dialogService) : base(navigationService)
         {
-            this._profileManager = profileManager;
-            this._settingsManager = settingsManager;
+            _profileManager = profileManager;
+            _dialogService = dialogService;
         }
 
-        #region --- Commands ---
+        #region -- Public Propreties --
+        public Profile CurrentProfile { get; set; }
+        private ICommand _previousPageCommand;
+        public ICommand PreviousPageCommand => _previousPageCommand ?? new Command(Back);
+        private ICommand _profileImageClickCommand;
+        public ICommand ProfileImageClickCommand => _profileImageClickCommand ?? new Command(ClickImage);
+        private ICommand _saveCommand;
+        public ICommand SaveCommand => _saveCommand ?? new Command(Save);
 
-        public ICommand PreviousPageCommand => new Command(Back);
-        public ICommand ProfileImageClickCommand => new Command(ClickImage);
-        public ICommand SaveCommand => new Command(Save);
+
+        private string _image;
+        public string Image
+        {
+            get
+            {
+                if (_image == null) 
+                {
+                    return "user_person.png";
+                }
+                else
+                {
+                    return _image;
+                }
+            }
+            set => SetProperty(ref _image, value); 
+        }
 
         #endregion
+
 
         #region --- Overrides ---
 
         public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
+
             if (CurrentProfile == null)
-                this.CurrentProfile = new Profile();
-            CurrentProfile.CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-            CurrentProfile.ProfileImage = "user_person.png";
+            {
+                CurrentProfile = new Profile();
+
+                CurrentProfile.CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                CurrentProfile.ProfileImage = "user_person.png";
+            }
         }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
@@ -51,7 +74,10 @@ namespace ProfileBook.ViewModels
 
             parameters.TryGetValue("Profile", out Profile profile);
             if (profile != null)
+            {
                 CurrentProfile = profile;
+            }
+
             RaisePropertyChanged(nameof(CurrentProfile));
         }
 
@@ -64,23 +90,30 @@ namespace ProfileBook.ViewModels
             await NavigationService.NavigateAsync(nameof(MainListView));
         }
 
-
         private void ClickImage()
         {
-            var pickImageDialog = new PickImageDialog();
-
-            pickImageDialog.ChoosePhoto(CurrentProfile);
+            UserDialogs.Instance
+               .ActionSheet(new ActionSheetConfig()
+                                   .SetTitle("Choose Action")
+                                   .Add("Pick at Gallery", () => _dialogService.GetPhotoAsync(CurrentProfile), "gallery_icon.png")
+                                   .Add("Take photo with camera", () => _dialogService.TakePhotoAsync(CurrentProfile), "camera_icon.png")
+                               );
 
             RaisePropertyChanged(nameof(CurrentProfile));
         }
 
+
+
         private async void Save()
         {
             string errorMessage = Validator.IsProfileValid(CurrentProfile);
+
             bool isValid = string.IsNullOrEmpty(errorMessage);
 
             if (!isValid)
+            {
                 UserDialogs.Instance.Alert(errorMessage, "Error", "Ok");
+            }
             else
             {
                 await _profileManager.SaveProfile(CurrentProfile);

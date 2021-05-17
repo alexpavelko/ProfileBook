@@ -4,21 +4,29 @@ using Prism.Navigation;
 using ProfileBook.Views;
 using System.Collections.ObjectModel;
 using ProfileBook.Models;
-using ProfileBook.Services.Settings;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using ProfileBook.Services.Profile;
-using ProfileBook.Services.Authentication;
+using ProfileBook.Services.Authorization;
 
 namespace ProfileBook.ViewModels
 {
     class MainListViewModel : BaseViewModel
     {
-        private ISettingsManager _settingsManager;
         private IProfileManager _profileManager;
-        private IAuthenticationManager _authenticationManager;
+        private IAuthorizationService _authorizationService;
 
-        #region --- Properties ---
+        public MainListViewModel(INavigationService navigationService,
+                               IProfileManager profileManager,
+                               IAuthorizationService authenticationService
+                                 ) : base(navigationService)
+        {
+            _profileManager = profileManager;
+            _authorizationService = authenticationService;
+        }
+
+        #region -- Public properties --
+
         private string _btnAdd;
         public string BtnAddIsVisible
         {
@@ -69,19 +77,8 @@ namespace ProfileBook.ViewModels
         }
 
         #endregion
-        public MainListViewModel(INavigationService navigationService,
-                               IProfileManager profileManager,
-                               ISettingsManager settingsManager,
-                               IAuthenticationManager authenticationManager
-                                 ) : base(navigationService)
-        {
-            _profileManager = profileManager;
-            _settingsManager = settingsManager;
-            _authenticationManager = authenticationManager;
-            UserDialogs.Instance.AlertAsync("\nSettingM = " + settingsManager.UserId, "ok", "ok");
-        }
 
-        #region --- Commands ---
+        #region -- Commands --
         public ICommand LogOutCommand => new Command(Logout);
 
         public ICommand AddProfileCommand => new Command(Add);
@@ -92,7 +89,7 @@ namespace ProfileBook.ViewModels
 
         #endregion
 
-        #region --- Overrides ---
+        #region -- Overrides --
         public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
@@ -110,13 +107,13 @@ namespace ProfileBook.ViewModels
 
         #endregion
 
-        #region --- Private Helpers ---
+        #region -- Private Helpers --
 
         private async Task LoadUsers()
         {
             this.ProfileList.Clear();
 
-            var profiles = await _profileManager.GetProfiles(_settingsManager.UserId);
+            var profiles = await _profileManager.GetProfiles();
 
             if (profiles != null)
             {
@@ -127,8 +124,14 @@ namespace ProfileBook.ViewModels
 
         private async void Logout()
         {
-            if(!_authenticationManager.outAuthorized())
+            var isAuthorize = _authorizationService.IsAuthorize();
+
+            if (isAuthorize == true)
+            {
+                _authorizationService.LogOut();
+
                 await NavigationService.NavigateAsync(nameof(SignInView));
+            }
         }
 
         private async void Add()

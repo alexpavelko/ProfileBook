@@ -4,7 +4,7 @@
              x:Class="ProfileBook.Views.SignUpView">
 
     <NavigationPage.TitleView>
-        <Label Text="Sign up" HorizontalOptions="Center" TextColor="White" FontSize="Medium" />
+        <Label Text="Sign up" TextColor="White" FontSize="Medium" />
     </NavigationPage.TitleView>
 
     <ScrollView>
