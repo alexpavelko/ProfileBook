@@ -58,36 +58,46 @@ namespace ProfileBook.ViewModels
 
         private async void Register()
         {
-            var isValid = Validator.IsLoginValid(Login) &&
-           Validator.IsPasswordValid(Password, ConfirmPassword);
-
-            if (isValid)
+            if (!(string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password) || 
+                string.IsNullOrEmpty(ConfirmPassword)))
             {
-                var signUpResult = await _authenticationService.SignUp(Login, Password);
 
-                if (signUpResult)
+                bool isLoginValid = Validator.IsLoginValid(Login);
+                bool isPasswrodValid = Validator.IsPasswordValid(Password, ConfirmPassword);
+                bool isValid = isLoginValid && isPasswrodValid;
+
+                if (isValid)
                 {
-                    User user = new User { Login = Login, Password = Password };
+                    var signUpResult = await _authenticationService.SignUp(Login, Password);
 
-                    await UserDialogs.Instance.AlertAsync("Successful Registration!", "Successful", "Ok");
-                    
-                    var parameters = new NavigationParameters
+                    if (signUpResult)
+                    {
+                        User user = new User { Login = Login, Password = Password };
+
+                        await UserDialogs.Instance.AlertAsync("Successful Registration!", "Successful", "Ok");
+
+                        var parameters = new NavigationParameters
                     {
                         {"login", user.Login },
                         {"password", user.Password }
                     };
-                    await NavigationService.NavigateAsync(nameof(SignInView), parameters);
+                        await NavigationService.NavigateAsync(nameof(SignInView), parameters);
+                    }
+
+                    else
+                    {
+                        await UserDialogs.Instance.AlertAsync("Login is already takern!", "Sign up", "Ok");
+                    }
                 }
 
                 else
                 {
-                    await UserDialogs.Instance.AlertAsync("Login is already takern!", "Sign up", "Ok");
+                    await UserDialogs.Instance.AlertAsync(Validator.alert, "Sign up", "Ok");
                 }
             }
-
             else
             {
-                await UserDialogs.Instance.AlertAsync(Validator.errorMessage, "Sign in", "Ok");
+                await UserDialogs.Instance.AlertAsync("All fields must be filled!", "Sign up", "Ok");
             }
         }
 

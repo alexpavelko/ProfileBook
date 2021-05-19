@@ -15,11 +15,8 @@
 
   <ItemGroup>
     <Compile Remove="Resources\**" />
-    <Compile Remove="Validators\**" />
     <EmbeddedResource Remove="Resources\**" />
-    <EmbeddedResource Remove="Validators\**" />
     <None Remove="Resources\**" />
-    <None Remove="Validators\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.483" />
+    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.514" />
     <PackageReference Include="Prism.Unity.Forms" Version="8.0.0.1909" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="Xamarin.FFImageLoading" Version="2.4.11.982" />

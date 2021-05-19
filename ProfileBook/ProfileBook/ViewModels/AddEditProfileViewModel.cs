@@ -106,9 +106,9 @@ namespace ProfileBook.ViewModels
 
         private async void Save()
         {
-            string errorMessage = Validator.IsProfileValid(CurrentProfile);
+            bool isValid = Validator.IsProfileValid(CurrentProfile);
 
-            bool isValid = string.IsNullOrEmpty(errorMessage);
+            string errorMessage = Validator.alert;
 
             if (!isValid)
             {
