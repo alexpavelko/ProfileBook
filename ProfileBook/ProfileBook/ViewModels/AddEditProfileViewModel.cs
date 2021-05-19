@@ -12,7 +12,7 @@ using ProfileBook.Services.Dialogs;
 namespace ProfileBook.ViewModels
 {
     class AddEditProfileViewModel : BaseViewModel
-    {       
+    {
         private IProfileManager _profileManager;
         private ICameraDialogService _dialogService;
 
@@ -32,40 +32,43 @@ namespace ProfileBook.ViewModels
         private ICommand _saveCommand;
         public ICommand SaveCommand => _saveCommand ?? new Command(Save);
 
-
-        private string _image;
-        public string Image
+        private string _profileImage;
+        public string ProfileImage
         {
-            get
-            {
-                if (_image == null) 
-                {
-                    return "user_person.png";
-                }
-                else
-                {
-                    return _image;
-                }
-            }
-            set => SetProperty(ref _image, value); 
+            get => _profileImage;
+            set => SetProperty(ref _profileImage, value);
+        }
+
+        private string _name;
+        public string Name
+        {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+
+        private string _nickName;
+        public string NickName
+        {
+            get => _nickName;
+            set => SetProperty(ref _nickName, value);
+        }
+
+        private string _description;
+        public string Description
+        {
+            get => _description;
+            set => SetProperty(ref _description, value);
         }
 
         #endregion
 
-
-        #region --- Overrides ---
+        #region -- Overrides --
 
         public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
 
-            if (CurrentProfile == null)
-            {
-                CurrentProfile = new Profile();
-
-                CurrentProfile.CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-                CurrentProfile.ProfileImage = "user_person.png";
-            }
+            ProfileImage = "user_person.png";
         }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
@@ -73,12 +76,15 @@ namespace ProfileBook.ViewModels
             base.OnNavigatedTo(parameters);
 
             parameters.TryGetValue("Profile", out Profile profile);
+
             if (profile != null)
             {
                 CurrentProfile = profile;
+                ProfileImage = CurrentProfile.ProfileImage;
+                Name = CurrentProfile.Name;
+                NickName = CurrentProfile.NickName;
+                Description = CurrentProfile.Description;
             }
-
-            RaisePropertyChanged(nameof(CurrentProfile));
         }
 
         #endregion
@@ -92,20 +98,27 @@ namespace ProfileBook.ViewModels
 
         private void ClickImage()
         {
+
             UserDialogs.Instance
                .ActionSheet(new ActionSheetConfig()
                                    .SetTitle("Choose Action")
-                                   .Add("Pick at Gallery", () => _dialogService.GetPhotoAsync(CurrentProfile), "gallery_icon.png")
-                                   .Add("Take photo with camera", () => _dialogService.TakePhotoAsync(CurrentProfile), "camera_icon.png")
+                                   .Add("Pick at Gallery", async () => ProfileImage = await _dialogService.GetPhotoAsync(), "gallery_icon.png")
+                                   .Add("Take photo with camera", async () => ProfileImage = await _dialogService.TakePhotoAsync(), "camera_icon.png")
                                );
-
-            RaisePropertyChanged(nameof(CurrentProfile));
         }
-
-
 
         private async void Save()
         {
+            if (CurrentProfile == null)
+            {
+                CurrentProfile = new Profile();
+            }
+                CurrentProfile.CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                CurrentProfile.Name = Name;
+                CurrentProfile.NickName = NickName;
+                CurrentProfile.Description = Description;
+            
+
             bool isValid = Validator.IsProfileValid(CurrentProfile);
 
             string errorMessage = Validator.alert;
@@ -116,6 +129,8 @@ namespace ProfileBook.ViewModels
             }
             else
             {
+                CurrentProfile.ProfileImage = ProfileImage;
+
                 await _profileManager.SaveProfile(CurrentProfile);
 
                 await NavigationService.NavigateAsync(nameof(MainListView));

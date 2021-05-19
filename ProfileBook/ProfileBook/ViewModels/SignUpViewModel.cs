@@ -35,7 +35,7 @@ namespace ProfileBook.ViewModels
             set => SetProperty(ref _confirmPassword, value);
         }
         #endregion
-        
+
         public SignUpViewModel(INavigationService navigationService,
             IAuthenticationService authenticationService) : base(navigationService)
         {
@@ -58,10 +58,11 @@ namespace ProfileBook.ViewModels
 
         private async void Register()
         {
-            if (!(string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password) || 
-                string.IsNullOrEmpty(ConfirmPassword)))
-            {
+            var isNull = (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password) ||
+                string.IsNullOrEmpty(ConfirmPassword));
 
+            if (!isNull)
+            {
                 bool isLoginValid = Validator.IsLoginValid(Login);
                 bool isPasswrodValid = Validator.IsPasswordValid(Password, ConfirmPassword);
                 bool isValid = isLoginValid && isPasswrodValid;

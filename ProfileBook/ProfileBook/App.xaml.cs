@@ -18,6 +18,7 @@ namespace ProfileBook
         public IAuthorizationService AuthorizationService =>
             _authorizationService ?? Container.Resolve<IAuthorizationService>();
         public App() { }
+        
         #region ---Overrides--
         protected override void OnInitialized()
         {
@@ -29,16 +30,17 @@ namespace ProfileBook
             {
                 NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(MainListView)}");
             }
-            else NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignInView)}");
+            else
+            {
+                NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignInView)}");
+            }
         }
-
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             //Services
             containerRegistry.RegisterInstance<IRepository>(Container.Resolve<Repository>());
             containerRegistry.RegisterInstance<ISettingsManager>(Container.Resolve<SettingsManager>());
-            containerRegistry.RegisterInstance<IProfileManager>(Container.Resolve<ProfileManager>());
-            
+            containerRegistry.RegisterInstance<IProfileManager>(Container.Resolve<ProfileManager>());    
             containerRegistry.RegisterInstance<ICameraDialogService>(Container.Resolve<CameraDialogService>());
             containerRegistry.RegisterInstance<IAuthorizationService>(Container.Resolve<AuthorizationService>());
             containerRegistry.RegisterInstance<IAuthenticationService>(Container.Resolve<AuthenticationService>());
@@ -62,6 +64,7 @@ namespace ProfileBook
         protected override void OnResume()
         {
         }
+
         #endregion
     }
 }

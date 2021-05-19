@@ -11,7 +11,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem IconImageSource="save_icon.png" Command="{Binding SaveCommand}"/>
     </ContentPage.ToolbarItems>
-     
+
     <ScrollView>
         <StackLayout Background="White">
             <ffimageloading:CachedImage
@@ -19,30 +19,30 @@
                 VerticalOptions="Center"
                 HeightRequest="200"
                 WidthRequest="200"
-                Margin="0,50,0,0"
-                LoadingPlaceholder="user_person.png"                                       
-                Source="{Binding Image}">
-
+                Margin="0,50,0,0"  
+                LoadingPlaceholder="user_person.png"
+                Source="{Binding ProfileImage}">
+                
                 <ffimageloading:CachedImage.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding ProfileImageClickCommand}"/>
                 </ffimageloading:CachedImage.GestureRecognizers>
-                
+
             </ffimageloading:CachedImage>
 
             <StackLayout Margin="0,50,0,0">
 
-                <Entry Text="{Binding CurrentProfile.NickName}"
+                <Entry Text="{Binding NickName}"
                     Margin="40,0,40,0"
                     Placeholder="NickName"              
                     Style="{StaticResource EntryStyle}"/>
 
-                <Entry Text="{Binding CurrentProfile.Name}"
+                <Entry Text="{Binding Name}"
                     Placeholder="Name"
                     Margin="40,0,40,0"
                     Style="{StaticResource EntryStyle}"/>
 
                 <Editor Placeholder="Description"
-                    Text="{Binding CurrentProfile.Description}"
+                    Text="{Binding Description}"
                     HeightRequest="150"
                     Background="#d4d4d4"
                     Margin="40,60,40,0" />
@@ -50,13 +50,4 @@
             </StackLayout>
         </StackLayout>
     </ScrollView>
-    <ContentPage.Resources>
-
-        <Style x:Key="ImageButtonStyle" TargetType="ImageButton">
-            <Setter Property="BackgroundColor" Value="#2196F3"></Setter>
-            <Setter Property="HorizontalOptions" Value="End"></Setter>
-            <Setter Property="WidthRequest" Value="25"></Setter>
-        </Style>
-
-    </ContentPage.Resources>
 </ContentPage>

@@ -126,7 +126,7 @@ namespace ProfileBook.ViewModels
         {
             var isAuthorize = _authorizationService.IsAuthorize();
 
-            if (isAuthorize == true)
+            if (isAuthorize)
             {
                 _authorizationService.LogOut();
 
@@ -157,6 +157,7 @@ namespace ProfileBook.ViewModels
         private async void Delete()
         {
             bool isConfirmed = await UserDialogs.Instance.ConfirmAsync("Are you sure you want to delete?", "Confirm action", "OK", "Cancel");
+            
             if (SelectedItem != null && isConfirmed)
             {
                 await _profileManager.RemoveProfile(SelectedItem);
