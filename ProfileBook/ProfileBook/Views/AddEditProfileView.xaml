@@ -24,7 +24,7 @@
                 Source="{Binding ProfileImage}">
                 
                 <ffimageloading:CachedImage.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ProfileImageClickCommand}"/>
+                    <TapGestureRecognizer Command="{Binding OnImageTapCommand}"/>
                 </ffimageloading:CachedImage.GestureRecognizers>
 
             </ffimageloading:CachedImage>

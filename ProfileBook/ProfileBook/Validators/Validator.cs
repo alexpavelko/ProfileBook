@@ -32,31 +32,44 @@ namespace ProfileBook.Services.Validators
         }
         public static bool IsLoginValid(string login)
         {
-            isValid = true;
-
-            if (!Regex.IsMatch(login, @"^[a-zA-Z][a-zA-Z0-9]{3,16}$"))
+            if (login != null)
             {
-                alert = "Login:\n * Minimum 4 chars, maximum 16 chars.\n * Can not starts with number\n";
-                isValid = false;
+                isValid = true;
+
+                if (!Regex.IsMatch(login, @"^[a-zA-Z][a-zA-Z0-9]{3,16}$"))
+                {
+                    alert = "Login:\n * Minimum 4 chars, maximum 16 chars.\n * Can not starts with number\n";
+                    isValid = false;
+                }
+                else
+                {
+                    alert = "All fields must be field!";
+                }
             }
 
             return isValid;
         }
-
         public static bool IsPasswordValid(string password, string confirmPassword)
         {
-            isValid = true;
+           if (password != null && confirmPassword != null)
+           {
+                isValid = true;
 
-            if (!Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$"))
-            {
-                alert = "Passsword:\n * Minimum 8 chars, maximum 16 chars.\n * At least 1 uppercase letter, 1 lowercase letter and 1 number\n";
-                isValid = false;
+                if (!Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$"))
+                {
+                    alert = "Passsword:\n * Minimum 8 chars, maximum 16 chars.\n * At least 1 uppercase letter, 1 lowercase letter and 1 number\n";
+                    isValid = false;
+                }
+
+                if (!confirmPassword.Equals(password))
+                {
+                    alert = "Confirm password:\n * Must match the password\n";
+                    isValid = false;
+                }               
             }
-
-            if (!confirmPassword.Equals(password))
+            else 
             {
-                alert = "Confirm password:\n * Must match the password\n";
-                isValid = false;
+                alert = "All fields must be field!";
             }
 
             return isValid;

@@ -23,24 +23,29 @@ namespace ProfileBook.Services.Profile
 
             string sqlCommand = $"SELECT * FROM Profiles WHERE UserId={currentUserId}";
 
-            return await _repository.GetAllWithQueryAsync<Models.Profile>(sqlCommand);
+            var profiles = await _repository.GetAllWithQueryAsync<Models.Profile>(sqlCommand);
+
+            return profiles;
         }
 
-        public async Task RemoveProfile(Models.Profile profile)
+        public async Task<Models.Profile> RemoveProfile(Models.Profile profile)
         {
-            if (File.Exists(profile.ProfileImage))
-                File.Delete(profile.ProfileImage);
+            if (File.Exists(profile.ProfileImage)) File.Delete(profile.ProfileImage);
 
             await _repository.DeleteAsync(profile);
+
+            return profile;
         }
 
-        public async Task SaveProfile(Models.Profile profile)
+        public async Task<Models.Profile> SaveProfile(Models.Profile profile)
         {
             var profileToSave = profile;
 
             profile.UserId = _settingsManager.UserId;
 
             await _repository.AddOrUpdateAsync(profileToSave);
+
+            return profile;
         }
     }
 }

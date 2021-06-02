@@ -13,7 +13,8 @@ namespace ProfileBook.ViewModels
     {
         private IAuthenticationService _authenticationService;
 
-        #region --- Properties ---
+        #region -- Properties --
+
         private string _login;
         public string Login
         {
@@ -34,71 +35,51 @@ namespace ProfileBook.ViewModels
             get => _confirmPassword;
             set => SetProperty(ref _confirmPassword, value);
         }
+
+        public ICommand SignUpCommand => new Command(OnSignUpTap);
+        
         #endregion
 
-        public SignUpViewModel(INavigationService navigationService,
-            IAuthenticationService authenticationService) : base(navigationService)
+        public SignUpViewModel(INavigationService navigationService, IUserDialogs userDialogs,
+            IAuthenticationService authenticationService) : base(navigationService, userDialogs)
         {
             _authenticationService = authenticationService;
         }
 
-        #region --- Commands ---
 
-        public ICommand BackCommand => new Command(SignIn);
+        #region -- Private Helpers --
 
-        public ICommand SignUpCommand => new Command(Register);
-        #endregion
-
-        #region --- Private Helpers ---
-
-        private async void SignIn()
+        private async void OnSignUpTap()
         {
-            await NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignInView)}");
-        }
+            bool isLoginValid = Validator.IsLoginValid(Login);
+            bool isPasswrodValid = Validator.IsPasswordValid(Password, ConfirmPassword);
 
-        private async void Register()
-        {
-            var isNull = (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password) ||
-                string.IsNullOrEmpty(ConfirmPassword));
-
-            if (!isNull)
+            if (isLoginValid && isPasswrodValid)
             {
-                bool isLoginValid = Validator.IsLoginValid(Login);
-                bool isPasswrodValid = Validator.IsPasswordValid(Password, ConfirmPassword);
-                bool isValid = isLoginValid && isPasswrodValid;
+                var signUpResult = await _authenticationService.SignUp(Login, Password);
 
-                if (isValid)
+                if (signUpResult)
                 {
-                    var signUpResult = await _authenticationService.SignUp(Login, Password);
+                    User user = new User { Login = Login, Password = Password };
 
-                    if (signUpResult)
+                    await UserDialogs.AlertAsync("Successful Registration!", "Successful", "Ok");
+
+                    var parameters = new NavigationParameters
                     {
-                        User user = new User { Login = Login, Password = Password };
-
-                        await UserDialogs.Instance.AlertAsync("Successful Registration!", "Successful", "Ok");
-
-                        var parameters = new NavigationParameters
-                    {
-                        {"login", user.Login },
-                        {"password", user.Password }
+                        {"login", user.Login }                       
                     };
-                        await NavigationService.NavigateAsync(nameof(SignInView), parameters);
-                    }
-
-                    else
-                    {
-                        await UserDialogs.Instance.AlertAsync("Login is already takern!", "Sign up", "Ok");
-                    }
+                    await NavigationService.NavigateAsync($"/{nameof(NavigationPage)}/{nameof(SignInView)}", parameters);
                 }
 
                 else
                 {
-                    await UserDialogs.Instance.AlertAsync(Validator.alert, "Sign up", "Ok");
+                    await UserDialogs.AlertAsync("Login is already taken!", "Sign up", "Ok");
                 }
             }
+
             else
             {
-                await UserDialogs.Instance.AlertAsync("All fields must be filled!", "Sign up", "Ok");
+                await UserDialogs.AlertAsync(Validator.alert, "Sign up", "Ok");
             }
         }
 

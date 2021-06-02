@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Acr.UserDialogs;
+using Prism.Mvvm;
 using Prism.Navigation;
 
 namespace ProfileBook.ViewModels
@@ -6,9 +7,11 @@ namespace ProfileBook.ViewModels
     public class BaseViewModel : BindableBase, IInitialize, INavigationAware
     {
         protected INavigationService NavigationService { get; private set; }
-        public BaseViewModel(INavigationService navigationService)
+        protected IUserDialogs UserDialogs { get; private set; }
+        public BaseViewModel(INavigationService navigationService, IUserDialogs userDialogs)
         {
-           NavigationService = navigationService;
+            NavigationService = navigationService;
+            UserDialogs = userDialogs;
         }
         public  virtual void Initialize(INavigationParameters parameters)
         {

@@ -10,11 +10,10 @@ namespace ProfileBook.ViewModels
 {
     public class SignInViewModel : BaseViewModel
     {
-       
         private IAuthenticationService _authenticationService;
         private ISettingsManager _settingsManager;
 
-        #region --- Properties --- 
+        #region -- Properties -- 
         
         private string _password;
         public string Password
@@ -30,54 +29,51 @@ namespace ProfileBook.ViewModels
             set => SetProperty(ref _login, value);
         }
 
+        public ICommand SignUpCommand => new Command(OnSignUpTap);
+        public ICommand SignInCommand => new Command(OnSignInTap);
+
         #endregion
-        public SignInViewModel(INavigationService navigationService,
-            IAuthenticationService authenticationService,
-            ISettingsManager settingsManager) : base(navigationService)
+
+        public SignInViewModel(INavigationService navigationService, IUserDialogs userDialogs,
+            IAuthenticationService authenticationService, ISettingsManager settingsManager
+            ) : base(navigationService, userDialogs)
         {
             _authenticationService = authenticationService;
             _settingsManager = settingsManager;
         }
 
-        #region --- Commands ---
 
-        public ICommand SignUpCommand => new Command(SignUp);
-
-        public ICommand UserSignInCommand => new Command(SignIn);
-
-        #endregion
-
-        #region --- Overrides ---
+        #region -- Overrides --
 
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
-            parameters.TryGetValue("password", out string password);
-            this.Password = password;
+
             parameters.TryGetValue("login", out string login);
-            this.Login = login;
+
+            Login = login;
         }
 
         #endregion
 
-        #region --- Private Helpers ---
+        #region -- Private Helpers --
 
-        private async void SignUp()
+        private async void OnSignUpTap()
         {
-            await NavigationService.NavigateAsync(nameof(SignUpView));
+            await NavigationService.NavigateAsync($"/{nameof(NavigationPage)}/{nameof(SignUpView)}");
         }
 
-        private async void SignIn()
+        private async void OnSignInTap()
         {
             var signInResult = await _authenticationService.SignIn(Login, Password);
 
-            if (signInResult == true)
+            if (signInResult)
             {
-                await NavigationService.NavigateAsync(nameof(MainListView));
+                await NavigationService.NavigateAsync($"/{nameof(NavigationPage)}/{nameof(MainListView)}");
             }
             else
             {
-                await UserDialogs.Instance.AlertAsync("Login or password wrong", "Error login or password", "Ok");
+                await UserDialogs.AlertAsync("Login or password wrong", "Error login or password", "Ok");
             }
         }
 

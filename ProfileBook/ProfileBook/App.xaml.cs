@@ -9,6 +9,7 @@ using ProfileBook.Services.Dialogs;
 using Xamarin.Forms;
 using ProfileBook.Services.Authorization;
 using ProfileBook.Services.Authentication;
+using Acr.UserDialogs;
 
 namespace ProfileBook
 {
@@ -44,6 +45,8 @@ namespace ProfileBook
             containerRegistry.RegisterInstance<ICameraDialogService>(Container.Resolve<CameraDialogService>());
             containerRegistry.RegisterInstance<IAuthorizationService>(Container.Resolve<AuthorizationService>());
             containerRegistry.RegisterInstance<IAuthenticationService>(Container.Resolve<AuthenticationService>());
+
+            containerRegistry.RegisterInstance<IUserDialogs>(UserDialogs.Instance);
 
             //Navigation
             containerRegistry.RegisterForNavigation<NavigationPage>();

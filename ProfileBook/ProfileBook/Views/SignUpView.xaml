@@ -31,12 +31,10 @@
                             IsPassword="True"           
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
-                <Button Text="SIGN UP"              
+                <Button Text="Sign Up"              
                             Command="{Binding SignUpCommand}"     
                             Style="{StaticResource ButtonStyle}"/>
-                <Button Text="Back"              
-                            Command="{Binding BackCommand}"     
-                            Style="{StaticResource ButtonStyle}"/>
+              
             </StackLayout>
         </StackLayout>
     </ScrollView>

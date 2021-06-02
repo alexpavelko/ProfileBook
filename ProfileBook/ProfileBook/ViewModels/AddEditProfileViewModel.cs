@@ -15,22 +15,9 @@ namespace ProfileBook.ViewModels
     {
         private IProfileManager _profileManager;
         private ICameraDialogService _dialogService;
-
-        public AddEditProfileViewModel(INavigationService navigationService,
-            IProfileManager profileManager, CameraDialogService dialogService) : base(navigationService)
-        {
-            _profileManager = profileManager;
-            _dialogService = dialogService;
-        }
+        private Profile CurrentProfile { get; set; }
 
         #region -- Public Propreties --
-        public Profile CurrentProfile { get; set; }
-        private ICommand _previousPageCommand;
-        public ICommand PreviousPageCommand => _previousPageCommand ?? new Command(Back);
-        private ICommand _profileImageClickCommand;
-        public ICommand ProfileImageClickCommand => _profileImageClickCommand ?? new Command(ClickImage);
-        private ICommand _saveCommand;
-        public ICommand SaveCommand => _saveCommand ?? new Command(Save);
 
         private string _profileImage;
         public string ProfileImage
@@ -59,8 +46,18 @@ namespace ProfileBook.ViewModels
             get => _description;
             set => SetProperty(ref _description, value);
         }
+        
+        public ICommand OnImageTapCommand => new Command(OnImageTap);
+        public ICommand SaveCommand => new Command(OnSaveTap);
 
         #endregion
+
+        public AddEditProfileViewModel(INavigationService navigationService, IUserDialogs userDialogs,
+           IProfileManager profileManager, CameraDialogService dialogService) : base(navigationService, userDialogs)
+        {
+            _profileManager = profileManager;
+            _dialogService = dialogService;
+        }
 
         #region -- Overrides --
 
@@ -89,25 +86,18 @@ namespace ProfileBook.ViewModels
 
         #endregion
 
-        #region --- Private Helpers ---
+        #region -- Private Helpers --
 
-        private async void Back()
+        private void OnImageTap()
         {
-            await NavigationService.NavigateAsync(nameof(MainListView));
-        }
-
-        private void ClickImage()
-        {
-
-            UserDialogs.Instance
-               .ActionSheet(new ActionSheetConfig()
+            UserDialogs.ActionSheet(new ActionSheetConfig()
                                    .SetTitle("Choose Action")
                                    .Add("Pick at Gallery", async () => ProfileImage = await _dialogService.GetPhotoAsync(), "gallery_icon.png")
                                    .Add("Take photo with camera", async () => ProfileImage = await _dialogService.TakePhotoAsync(), "camera_icon.png")
                                );
         }
 
-        private async void Save()
+        private async void OnSaveTap()
         {
             if (CurrentProfile == null)
             {
@@ -125,15 +115,17 @@ namespace ProfileBook.ViewModels
 
             if (!isValid)
             {
-                UserDialogs.Instance.Alert(errorMessage, "Error", "Ok");
+                UserDialogs.Alert(errorMessage, "Error", "Ok");
             }
             else
             {
+                var list = _profileManager.GetProfiles();
+
                 CurrentProfile.ProfileImage = ProfileImage;
 
                 await _profileManager.SaveProfile(CurrentProfile);
 
-                await NavigationService.NavigateAsync(nameof(MainListView));
+                await NavigationService.NavigateAsync($"/{nameof(NavigationPage)}/{nameof(MainListView)}");
             }
         }
 

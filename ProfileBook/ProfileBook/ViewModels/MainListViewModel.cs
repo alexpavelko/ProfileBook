@@ -3,11 +3,11 @@ using System.Windows.Input;
 using Prism.Navigation;
 using ProfileBook.Views;
 using System.Collections.ObjectModel;
-using ProfileBook.Models;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using ProfileBook.Services.Profile;
 using ProfileBook.Services.Authorization;
+using ProfileBook.Extension;
 
 namespace ProfileBook.ViewModels
 {
@@ -15,31 +15,9 @@ namespace ProfileBook.ViewModels
     {
         private IProfileManager _profileManager;
         private IAuthorizationService _authorizationService;
-
-        public MainListViewModel(INavigationService navigationService,
-                               IProfileManager profileManager,
-                               IAuthorizationService authenticationService
-                                 ) : base(navigationService)
-        {
-            _profileManager = profileManager;
-            _authorizationService = authenticationService;
-        }
-
-        #region -- Public properties --
-
-        private string _btnAdd;
-        public string BtnAddIsVisible
-        {
-            get => _btnAdd;
-            set => SetProperty(ref _btnAdd, value);
-        }
-        private Profile _selectedItem;
-        public Profile SelectedItem
-        {
-            get => _selectedItem;
-            set => SetProperty(ref _selectedItem, value);
-        }
-
+    
+        #region -- Public properties --  
+        
         private string _profileImage;
         public string ProfileImage
         {
@@ -68,61 +46,61 @@ namespace ProfileBook.ViewModels
             set => SetProperty(ref _creationTime, value);
         }
 
-
-        public ObservableCollection<Profile> _profileList;
-        public ObservableCollection<Profile> ProfileList
+        public ObservableCollection<ProfileViewModel> _profileList;
+        public ObservableCollection<ProfileViewModel> ProfileList
         {
             get => _profileList;
             set => SetProperty(ref _profileList, value);
         }
 
-        #endregion
+        public ICommand LogOutCommand => new Command(OnLogOutTap);
 
-        #region -- Commands --
-        public ICommand LogOutCommand => new Command(Logout);
+        public ICommand AddProfileCommand => new Command(OnAddTap);
 
-        public ICommand AddProfileCommand => new Command(Add);
+        public ICommand UpdateCommand => new Command(OnUpdateTap);
 
-        public ICommand UpdateCommand => new Command(Update);
-
-        public ICommand DeleteCommand => new Command(Delete);
+        public ICommand DeleteCommand => new Command(OnDeleteTap);
 
         #endregion
+
+        public MainListViewModel(INavigationService navigationService, IUserDialogs userDialogs,
+           IProfileManager profileManager, IAuthorizationService authenticationService
+           ) : base(navigationService, userDialogs)
+        {
+            _profileManager = profileManager;
+            _authorizationService = authenticationService;
+        }
+
 
         #region -- Overrides --
         public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
 
-            ProfileList = new ObservableCollection<Profile>();
+            ProfileList = new ObservableCollection<ProfileViewModel>();
         }
         public override async void OnNavigatedTo(INavigationParameters parameters)
         {
-            BtnAddIsVisible = "False";
-
-            await LoadUsers();
-
-            BtnAddIsVisible = "True";
+            await GetAllUserProfiles();
         }
 
         #endregion
 
         #region -- Private Helpers --
 
-        private async Task LoadUsers()
+        private async Task GetAllUserProfiles()
         {
-            this.ProfileList.Clear();
+            ProfileList.Clear();
 
-            var profiles = await _profileManager.GetProfiles();
+            var profiles = await _profileManager.GetProfiles(); 
 
             if (profiles != null)
             {
-                profiles.ForEach(item => this.ProfileList.Add(item));
-                ProfileList = new ObservableCollection<Profile>(profiles);
+                profiles.ForEach(item => ProfileList.Add(item.ToViewModel()));
             }
         }
 
-        private async void Logout()
+        private async void OnLogOutTap()
         {
             var isAuthorize = _authorizationService.IsAuthorize();
 
@@ -130,38 +108,40 @@ namespace ProfileBook.ViewModels
             {
                 _authorizationService.LogOut();
 
-                await NavigationService.NavigateAsync(nameof(SignInView));
+                await NavigationService.NavigateAsync($"/{nameof(NavigationPage)}/{nameof(SignInView)}");
             }
         }
 
-        private async void Add()
+        private async void OnAddTap()
         {
-            await NavigationService.NavigateAsync(nameof(AddEditProfileView));
-            RaisePropertyChanged(nameof(ProfileList));
+            await NavigationService.NavigateAsync($"{nameof(AddEditProfileView)}");
         }
 
-        private async void Update()
+        private async void OnUpdateTap(object profileToUpdate)
         {
-            if (SelectedItem != null)
+            if (profileToUpdate != null)
             {
+                var profile = (ProfileViewModel)profileToUpdate;
+
                 var parameters = new NavigationParameters()
-               {
-                   { "Profile", SelectedItem }
-               };
-                await NavigationService.NavigateAsync(nameof(AddEditProfileView), parameters);
-                RaisePropertyChanged(nameof(ProfileList));
+                {
+                    { "Profile", profile.ToModel() } 
+                };
+                await NavigationService.NavigateAsync($"{nameof(AddEditProfileView)}", parameters);
             }
-
         }
 
-        private async void Delete()
+        private async void OnDeleteTap(object profileToDelete)
         {
-            bool isConfirmed = await UserDialogs.Instance.ConfirmAsync("Are you sure you want to delete?", "Confirm action", "OK", "Cancel");
+            bool isConfirmed = await UserDialogs.ConfirmAsync("Are you sure you want to delete?", "Confirm action", "OK", "Cancel");            
             
-            if (SelectedItem != null && isConfirmed)
+            if (profileToDelete != null && isConfirmed)
             {
-                await _profileManager.RemoveProfile(SelectedItem);
-                ProfileList.Remove(SelectedItem);
+                var profile = (ProfileViewModel)profileToDelete;
+
+                await _profileManager.RemoveProfile(profile.ToModel());
+
+                ProfileList.Remove(profile);
             }
         }
 
