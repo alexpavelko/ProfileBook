@@ -17,6 +17,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        
+        <Label Text="No profiles yet." HorizontalOptions="Center" VerticalOptions="Center"
+                  FontSize= "Large" IsVisible="{Binding LabelIsVisible}"/>
+        
         <ScrollView>
             <ListView Grid.Row="0" ItemsSource="{Binding ProfileList}"                            
                       RowHeight="150"
@@ -50,13 +54,12 @@
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollView>
-        <Button Grid.Row="0"
-                    Text="Add" FontAttributes="Bold" BorderColor="#4780ae"
-                    BorderWidth="5" BackgroundColor="#cbe3fe"
-                    BorderRadius="30" TextColor="#315673"
-                    HorizontalOptions="End" WidthRequest="60" HeightRequest="60"
-                    Margin="0,0,20,90" VerticalOptions="End"
-                    Command="{Binding AddProfileCommand}"/>
+        <Button Text="Add" FontAttributes="Bold" BorderColor="#4780ae"
+                BorderWidth="5" BackgroundColor="#cbe3fe"
+                BorderRadius="30" TextColor="#315673"
+                HorizontalOptions="End" WidthRequest="60" HeightRequest="60"
+                Margin="0,0,20,90" VerticalOptions="End"
+                Command="{Binding AddProfileCommand}"/>
     </Grid>
 
     <ContentPage.Resources>

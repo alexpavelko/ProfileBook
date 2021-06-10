@@ -60,7 +60,7 @@ namespace ProfileBook.ViewModels
 
         private async void OnSignUpTap()
         {
-            await NavigationService.NavigateAsync($"/{nameof(NavigationPage)}/{nameof(SignUpView)}");
+            await NavigationService.NavigateAsync($"{nameof(SignUpView)}");
         }
 
         private async void OnSignInTap()

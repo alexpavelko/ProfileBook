@@ -53,6 +53,12 @@ namespace ProfileBook.ViewModels
             set => SetProperty(ref _profileList, value);
         }
 
+        private bool _labelIsVisible;
+        public bool LabelIsVisible
+        {
+            get => _labelIsVisible;         
+            set => SetProperty(ref _labelIsVisible, value);
+        }
         public ICommand LogOutCommand => new Command(OnLogOutTap);
 
         public ICommand AddProfileCommand => new Command(OnAddTap);
@@ -82,6 +88,8 @@ namespace ProfileBook.ViewModels
         public override async void OnNavigatedTo(INavigationParameters parameters)
         {
             await GetAllUserProfiles();
+
+            UpdateCollection();
         }
 
         #endregion
@@ -142,7 +150,14 @@ namespace ProfileBook.ViewModels
                 await _profileManager.RemoveProfile(profile.ToModel());
 
                 ProfileList.Remove(profile);
+
+                UpdateCollection();
             }
+        }
+
+        private void UpdateCollection()
+        {
+            LabelIsVisible = ProfileList.Count == 0;
         }
 
         #endregion
