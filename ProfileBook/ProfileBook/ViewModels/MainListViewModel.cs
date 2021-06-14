@@ -8,6 +8,7 @@ using Acr.UserDialogs;
 using ProfileBook.Services.Profile;
 using ProfileBook.Services.Authorization;
 using ProfileBook.Extension;
+using ProfileBook.Services.Settings;
 
 namespace ProfileBook.ViewModels
 {
@@ -17,34 +18,6 @@ namespace ProfileBook.ViewModels
         private IAuthorizationService _authorizationService;
     
         #region -- Public properties --  
-        
-        private string _profileImage;
-        public string ProfileImage
-        {
-            get => _profileImage;
-            set => SetProperty(ref _profileImage, value);
-        }
-
-        private string _nickName;
-        public string NickName
-        {
-            get => _nickName;
-            set => SetProperty(ref _nickName, value);
-        }
-
-        private string _name;
-        public string Name
-        {
-            get => _name;
-            set => SetProperty(ref _name, value);
-        }
-
-        private string _creationTime;
-        public string CreationTime
-        {
-            get => _creationTime;
-            set => SetProperty(ref _creationTime, value);
-        }
 
         public ObservableCollection<ProfileViewModel> _profileList;
         public ObservableCollection<ProfileViewModel> ProfileList
@@ -67,14 +40,17 @@ namespace ProfileBook.ViewModels
 
         public ICommand DeleteCommand => new Command(OnDeleteTap);
 
+        public ICommand SettingsCommand => new Command(OnSettingsTap);
+
         #endregion
 
         public MainListViewModel(INavigationService navigationService, IUserDialogs userDialogs,
-           IProfileManager profileManager, IAuthorizationService authenticationService
-           ) : base(navigationService, userDialogs)
+           IProfileManager profileManager, IAuthorizationService authenticationService,
+           ISettingsManager settingsManager
+           ) : base(navigationService, userDialogs, settingsManager)
         {
             _profileManager = profileManager;
-            _authorizationService = authenticationService;
+            _authorizationService = authenticationService;           
         }
 
 
@@ -111,8 +87,9 @@ namespace ProfileBook.ViewModels
         private async void OnLogOutTap()
         {
             var isAuthorize = _authorizationService.IsAuthorize();
+            var confirmExit = await UserDialogs.ConfirmAsync(Resources["SureQuestion"], Resources["ConfirmAction"], Resources["Ok"], Resources["Cancel"]); 
 
-            if (isAuthorize)
+            if (isAuthorize && confirmExit)
             {
                 _authorizationService.LogOut();
 
@@ -141,7 +118,7 @@ namespace ProfileBook.ViewModels
 
         private async void OnDeleteTap(object profileToDelete)
         {
-            bool isConfirmed = await UserDialogs.ConfirmAsync("Are you sure you want to delete?", "Confirm action", "OK", "Cancel");            
+            bool isConfirmed = await UserDialogs.ConfirmAsync(Resources["SureQuestion"], Resources["Delete"], Resources["OK"], Resources["Cancel"]);            
             
             if (profileToDelete != null && isConfirmed)
             {
@@ -153,6 +130,11 @@ namespace ProfileBook.ViewModels
 
                 UpdateCollection();
             }
+        }
+
+        private async void OnSettingsTap()
+        {
+            await NavigationService.NavigateAsync($"{nameof(SettingsView)}");
         }
 
         private void UpdateCollection()

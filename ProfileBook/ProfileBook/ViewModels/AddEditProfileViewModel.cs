@@ -8,6 +8,8 @@ using ProfileBook.Models;
 using System;
 using ProfileBook.Services.Validators;
 using ProfileBook.Services.Dialogs;
+using ProfileBook.DefaultValues;
+using ProfileBook.Services.Settings;
 
 namespace ProfileBook.ViewModels
 {
@@ -53,7 +55,8 @@ namespace ProfileBook.ViewModels
         #endregion
 
         public AddEditProfileViewModel(INavigationService navigationService, IUserDialogs userDialogs,
-           IProfileManager profileManager, CameraDialogService dialogService) : base(navigationService, userDialogs)
+           IProfileManager profileManager, CameraDialogService dialogService, ISettingsManager settingsManager) 
+            : base(navigationService, userDialogs, settingsManager)
         {
             _profileManager = profileManager;
             _dialogService = dialogService;
@@ -65,7 +68,7 @@ namespace ProfileBook.ViewModels
         {
             base.Initialize(parameters);
 
-            ProfileImage = "user_person.png";
+            ProfileImage = Values.DEFAULT_PROFILE_IMAGE;
         }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
@@ -82,6 +85,10 @@ namespace ProfileBook.ViewModels
                 NickName = CurrentProfile.NickName;
                 Description = CurrentProfile.Description;
             }
+            else
+            {
+                CurrentProfile = new Profile();
+            }
         }
 
         #endregion
@@ -91,31 +98,25 @@ namespace ProfileBook.ViewModels
         private void OnImageTap()
         {
             UserDialogs.ActionSheet(new ActionSheetConfig()
-                                   .SetTitle("Choose Action")
-                                   .Add("Pick at Gallery", async () => ProfileImage = await _dialogService.GetPhotoAsync(), "gallery_icon.png")
-                                   .Add("Take photo with camera", async () => ProfileImage = await _dialogService.TakePhotoAsync(), "camera_icon.png")
-                               );
+                                   .SetTitle(Resources["ChooseAction"])
+                                   .Add(Resources["Pick at Gallery"], async () => ProfileImage = await _dialogService.GetPhotoAsync(), Values.GALLERY_ICON)
+                                   .Add(Resources["TakePhoto"], async () => ProfileImage = await _dialogService.TakePhotoAsync(), Values.CAMERA_ICON)
+                                   .Add(Resources["Cancel"], () => ProfileImage = ProfileImage, Values.CANCEL)
+                                   );
         }
 
         private async void OnSaveTap()
         {
-            if (CurrentProfile == null)
-            {
-                CurrentProfile = new Profile();
-            }
-                CurrentProfile.CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-                CurrentProfile.Name = Name;
-                CurrentProfile.NickName = NickName;
-                CurrentProfile.Description = Description;
-            
+            CurrentProfile.CreationTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+            CurrentProfile.Name = Name;
+            CurrentProfile.NickName = NickName;
+            CurrentProfile.Description = Description;          
 
-            bool isValid = Validator.IsProfileValid(CurrentProfile);
-
-            string errorMessage = Validator.alert;
+            bool isValid = Validator.IsProfileValid(CurrentProfile);         
 
             if (!isValid)
             {
-                UserDialogs.Alert(errorMessage, "Error", "Ok");
+                UserDialogs.Alert(Resources["NickNameNameIsEmpty"], Resources["Oops"], Resources["Ok"]);
             }
             else
             {

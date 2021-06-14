@@ -5,7 +5,7 @@
              x:Class="ProfileBook.Views.AddEditProfileView">
 
     <NavigationPage.TitleView>
-        <Label Text="Add Profile" TextColor="White" FontSize="Medium" />
+        <Label Text="{Binding Resources[CreateProfile]}" TextColor="White" FontSize="Medium" />
     </NavigationPage.TitleView>
 
     <ContentPage.ToolbarItems>
@@ -19,6 +19,7 @@
                 VerticalOptions="Center"
                 HeightRequest="200"
                 WidthRequest="200"
+                
                 Margin="0,50,0,0"  
                 LoadingPlaceholder="user_person.png"
                 Source="{Binding ProfileImage}">
@@ -33,15 +34,15 @@
 
                 <Entry Text="{Binding NickName}"
                     Margin="40,0,40,0"
-                    Placeholder="NickName"              
+                    Placeholder="{Binding Resources[Nickname]}"              
                     Style="{StaticResource EntryStyle}"/>
 
                 <Entry Text="{Binding Name}"
-                    Placeholder="Name"
+                    Placeholder="{Binding Resources[Name]}"
                     Margin="40,0,40,0"
                     Style="{StaticResource EntryStyle}"/>
 
-                <Editor Placeholder="Description"
+                <Editor Placeholder="{Binding Resources[Description]}"
                     Text="{Binding Description}"
                     HeightRequest="150"
                     Background="#d4d4d4"

@@ -4,34 +4,34 @@
              x:Class="ProfileBook.Views.SignUpView">
 
     <NavigationPage.TitleView>
-        <Label Text="Sign up" TextColor="White" FontSize="Medium" />
+        <Label Text="{Binding Resources[SignUp]}" TextColor="White" FontSize="Medium" />
     </NavigationPage.TitleView>
 
     <ScrollView>
-        <StackLayout x:Name="MainStack">
-            <Image Source="user_add.png" Margin="0,50,0,0" HeightRequest="200"/>
+        <StackLayout>
+           
             <StackLayout Margin="0,50,0,0">
                 <StackLayout Orientation="Horizontal">
                     <Image Source="user_login.png" />
                     <Entry Text="{Binding Login}"
-                            Placeholder="Login"              
+                            Placeholder="{Binding Resources[Login]}"              
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Image Source="user_password.png"/>
                     <Entry Text="{Binding Password}"
-                            Placeholder="Password"
+                            Placeholder="{Binding Resources[Password]}"
                             IsPassword="True"           
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Image Source="key_icon.png"/>
                     <Entry Text="{Binding ConfirmPassword}"
-                            Placeholder="Confirm Password"
+                            Placeholder="{Binding Resources[ConfirmPassword]}"
                             IsPassword="True"           
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
-                <Button Text="Sign Up"              
+                <Button Text="{Binding Resources[SignUp]}"              
                             Command="{Binding SignUpCommand}"     
                             Style="{StaticResource ButtonStyle}"/>
               

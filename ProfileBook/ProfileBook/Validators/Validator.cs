@@ -12,20 +12,13 @@ namespace ProfileBook.Services.Validators
             isValid = true;
 
             if (string.IsNullOrEmpty(profile.Name) || string.IsNullOrEmpty(profile.NickName))
-            {
-                alert = "NickName and name must be filled!";
+            {               
                 isValid = false;
             }
 
             if (profile.Description == null)
             {
                 profile.Description = string.Empty;
-            }
-
-            if (profile.Description.Length > 120)
-            {
-                alert = "Description must be no more than 120 characters!";
-                isValid = false;
             }
 
             return isValid;

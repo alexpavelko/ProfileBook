@@ -1,4 +1,5 @@
-﻿using ProfileBook.Models;
+﻿using ProfileBook.DefaultValues;
+using ProfileBook.Models;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace ProfileBook.Services.Repository
         {
             _database = new Lazy<SQLiteAsyncConnection>(() =>
             {
-                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "profilebook.db3");
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Values.DB_NAME);
                 var database = new SQLiteAsyncConnection(path);
 
                 database.CreateTableAsync<Models.Profile>().Wait();

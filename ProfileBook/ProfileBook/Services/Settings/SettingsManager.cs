@@ -1,13 +1,19 @@
-﻿using Xamarin.Essentials;
+﻿using ProfileBook.DefaultValues;
+using Xamarin.Essentials;
 
 namespace ProfileBook.Services.Settings
 {
     public class SettingsManager : ISettingsManager
     {
-        public int UserId 
+        public int UserId
         {
-            get => Preferences.Get(nameof(UserId), -1);
-            set => Preferences.Set(nameof(UserId), value); 
+            get => Preferences.Get(nameof(UserId), Values.DEFAULT_USER_ID);
+            set => Preferences.Set(nameof(UserId), value);
+        }
+        public string Language
+        {
+            get => Preferences.Get(nameof(Language), Values.DEFAULT_LANG);
+            set => Preferences.Set(nameof(Language), value);
         }
 
         public void ChangeUserId(int userId)

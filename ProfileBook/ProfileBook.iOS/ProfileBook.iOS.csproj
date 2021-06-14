@@ -73,6 +73,9 @@
     <ImageAsset Include="Assets.xcassets\Images1.imageset\app_icon.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Images1.imageset\cancel.png">
+      <Visible>false</Visible>
+    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\Images1.imageset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>

@@ -11,8 +11,7 @@ namespace ProfileBook.ViewModels
     public class SignInViewModel : BaseViewModel
     {
         private IAuthenticationService _authenticationService;
-        private ISettingsManager _settingsManager;
-
+        
         #region -- Properties -- 
         
         private string _password;
@@ -36,10 +35,9 @@ namespace ProfileBook.ViewModels
 
         public SignInViewModel(INavigationService navigationService, IUserDialogs userDialogs,
             IAuthenticationService authenticationService, ISettingsManager settingsManager
-            ) : base(navigationService, userDialogs)
+            ) : base(navigationService, userDialogs, settingsManager)
         {
-            _authenticationService = authenticationService;
-            _settingsManager = settingsManager;
+            _authenticationService = authenticationService;   
         }
 
 
@@ -73,7 +71,7 @@ namespace ProfileBook.ViewModels
             }
             else
             {
-                await UserDialogs.AlertAsync("Login or password wrong", "Error login or password", "Ok");
+                await UserDialogs.AlertAsync(Resources["LoginPasswordWrong"], Resources["ErrorLoginPassword"], Resources["Ok"]);
             }
         }
 

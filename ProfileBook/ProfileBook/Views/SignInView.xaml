@@ -4,33 +4,32 @@
              x:Class="ProfileBook.Views.SignInView" >
 
     <NavigationPage.TitleView>
-        <Label Text="Sign in" TextColor="White" FontSize="Medium" />
+        <Label Text="{Binding Resources[SignIn]}" TextColor="White" FontSize="Medium" />
     </NavigationPage.TitleView>
     
     <ScrollView>
-        <StackLayout x:Name="MainStack">
-            <Image Source="user_person.png" HeightRequest="200" Margin="0,50,0,0"/>
-            <StackLayout x:Name="UserControlsStack" Margin="0,50,0,0">
+        <StackLayout>
+            <StackLayout Margin="0,50,0,0">
                 <StackLayout Orientation="Horizontal">
                     <Image Source="user_login.png" />
                     <Entry  Text="{Binding Login}"
-                            Placeholder="Login"              
+                            Placeholder="{Binding Resources[Login]}"              
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Image Source="user_password.png"/>
                     <Entry  Text="{Binding Password}"
-                            Placeholder="Password"
+                            Placeholder="{Binding Resources[Password]}"
                             IsPassword="True"           
                             Style="{StaticResource EntryStyle}"/>
                 </StackLayout>
-                <Button Text="SIGN IN"              
+                <Button Text="{Binding Resources[SignIn]}"              
                             Command="{Binding SignInCommand}"     
                             Style="{StaticResource ButtonStyle}"/>
-                <Label Text="Sign Up" Style="{StaticResource HyperLinkStyle}">
+                <Label Style="{StaticResource HyperLinkStyle}">
                     <Label.FormattedText>
                         <FormattedString>
-                            <Span Text="Sign Up">
+                            <Span Text="{Binding Resources[SignUp]}">
                                 <Span.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SignUpCommand}"></TapGestureRecognizer>
                                 </Span.GestureRecognizers>

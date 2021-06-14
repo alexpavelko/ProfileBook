@@ -9,22 +9,26 @@
 
             <Style x:Key="EntryStyle" TargetType="Entry">
                 <Setter Property="FontSize" Value="Medium"></Setter>
-                <Setter Property="HeightRequest" Value="50"></Setter>
+                <Setter Property="HeightRequest" Value="100"></Setter>
                 <Setter Property="FontFamily" Value="Comic Sans MS"></Setter>
                 <Setter Property="HorizontalOptions" Value="FillAndExpand"></Setter>
+                <Setter Property="VerticalOptions" Value="CenterAndExpand"></Setter>
             </Style>
 
             <Style x:Key="ButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="#FFD33D8E"></Setter>
+                <Setter Property="Background" Value="#2196f3"></Setter>
                 <Setter Property="TextColor" Value="White"></Setter>
                 <Setter Property="FontSize" Value="Large"></Setter>
                 <Setter Property="FontAttributes" Value="Italic"></Setter>
+                <Setter Property="Margin" Value="30,50,30,0"></Setter>
+                <Setter Property="HeightRequest" Value="70"></Setter>
+                <Setter Property="CornerRadius" Value="10"></Setter>
             </Style>
 
             <Style x:Key="HyperLinkStyle" TargetType="Label">
                 <Setter Property="TextColor" Value="Blue"></Setter>
                 <Setter Property="TextDecorations" Value="Underline"></Setter>
-                <Setter Property="FontSize" Value="Subtitle"></Setter>
+                <Setter Property="FontSize" Value="Large"></Setter>
                 <Setter Property="Margin" Value="0,25,0,50"></Setter>
                 <Setter Property="HorizontalOptions" Value="Center"></Setter>
             </Style>

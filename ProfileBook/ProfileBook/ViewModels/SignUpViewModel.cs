@@ -2,6 +2,7 @@
 using Prism.Navigation;
 using ProfileBook.Models;
 using ProfileBook.Services.Authentication;
+using ProfileBook.Services.Settings;
 using ProfileBook.Services.Validators;
 using ProfileBook.Views;
 using System.Windows.Input;
@@ -41,11 +42,11 @@ namespace ProfileBook.ViewModels
         #endregion
 
         public SignUpViewModel(INavigationService navigationService, IUserDialogs userDialogs,
-            IAuthenticationService authenticationService) : base(navigationService, userDialogs)
+            IAuthenticationService authenticationService, ISettingsManager settingsManager) 
+            : base(navigationService, userDialogs, settingsManager)
         {
             _authenticationService = authenticationService;
         }
-
 
         #region -- Private Helpers --
 
@@ -62,7 +63,7 @@ namespace ProfileBook.ViewModels
                 {
                     User user = new User { Login = Login, Password = Password };
 
-                    await UserDialogs.AlertAsync("Successful Registration!", "Successful", "Ok");
+                    await UserDialogs.AlertAsync(Resources["RedirectingToSignIn"], Resources["SuccessfullRegistration"], Resources["Ok"]);
 
                     var parameters = new NavigationParameters
                     {
@@ -73,13 +74,13 @@ namespace ProfileBook.ViewModels
 
                 else
                 {
-                    await UserDialogs.AlertAsync("Login is already taken!", "Sign up", "Ok");
+                    await UserDialogs.AlertAsync(Resources["LoginIsTaken"], Resources["SignUp"], Resources["Ok"]);
                 }
             }
 
             else
             {
-                await UserDialogs.AlertAsync(Validator.alert, "Sign up", "Ok");
+                await UserDialogs.AlertAsync(Validator.alert, Resources["SignUp"], Resources["Ok"]);
             }
         }
 

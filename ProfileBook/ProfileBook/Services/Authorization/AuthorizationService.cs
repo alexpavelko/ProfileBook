@@ -1,4 +1,5 @@
-﻿using ProfileBook.Services.Settings;
+﻿using ProfileBook.DefaultValues;
+using ProfileBook.Services.Settings;
 
 namespace ProfileBook.Services.Authorization
 {
@@ -27,7 +28,7 @@ namespace ProfileBook.Services.Authorization
 
         public void LogOut()
         {
-            _settingsManager.ChangeUserId(-1);
+            _settingsManager.ChangeUserId(Values.DEFAULT_USER_ID);
         }
 
         #endregion

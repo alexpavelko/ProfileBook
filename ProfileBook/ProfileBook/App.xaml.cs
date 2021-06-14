@@ -17,7 +17,7 @@ namespace ProfileBook
     {
         private IAuthorizationService _authorizationService;
         public IAuthorizationService AuthorizationService =>
-            _authorizationService ?? Container.Resolve<IAuthorizationService>();
+            _authorizationService ?? (_authorizationService = Container.Resolve<IAuthorizationService>());
         public App() { }
         
         #region ---Overrides--
@@ -27,12 +27,12 @@ namespace ProfileBook
 
             var isAuthorize = AuthorizationService.IsAuthorize();
 
-            if (isAuthorize == true)
+            if (isAuthorize)
             {
                 NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(MainListView)}");
             }
             else
-            {
+            {               
                 NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignInView)}");
             }
         }
@@ -54,6 +54,7 @@ namespace ProfileBook
             containerRegistry.RegisterForNavigation<SignUpView, SignUpViewModel>();
             containerRegistry.RegisterForNavigation<MainListView, MainListViewModel>();
             containerRegistry.RegisterForNavigation<AddEditProfileView, AddEditProfileViewModel>();
+            containerRegistry.RegisterForNavigation<SettingsView, SettingsViewModel>();
         }
 
         protected override void OnStart()
