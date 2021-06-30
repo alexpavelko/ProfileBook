@@ -12,7 +12,7 @@ namespace ProfileBook.ViewModels
     {
         private IAuthenticationService _authenticationService;
         
-        #region -- Properties -- 
+        #region -- Public Properties -- 
         
         private string _password;
         public string Password
@@ -49,7 +49,10 @@ namespace ProfileBook.ViewModels
 
             parameters.TryGetValue("login", out string login);
 
-            Login = login;
+            if (login != null)
+            {
+                Login = login;
+            }
         }
 
         #endregion
@@ -63,7 +66,7 @@ namespace ProfileBook.ViewModels
 
         private async void OnSignInTap()
         {
-            var signInResult = await _authenticationService.SignIn(Login, Password);
+            var signInResult = await _authenticationService.SignInAsync(Login, Password);
 
             if (signInResult)
             {

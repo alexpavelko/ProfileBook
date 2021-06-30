@@ -8,28 +8,30 @@ namespace ProfileBook.Services.Dialogs
 {
     public class CameraDialogService : ICameraDialogService
     {
-        private string result;
+        #region -- ICameraDialog implementation --
 
-        public async Task<string> GetPhotoAsync()
+        public async Task<string> GetPhotoFullPathAsync()
         {
+            string fullPath = "";
+
             try
             {
                 var photo = await MediaPicker.PickPhotoAsync();
-        
-                if (photo.FullPath != null)
-                {
-                    result = photo.FullPath;                    
-                }
+
+                 fullPath = photo.FullPath;
             }
             catch (Exception ex)
             {
-                await UserDialogs.Instance.AlertAsync(ex.Message, "Error", "OK");
+                await UserDialogs.Instance.AlertAsync(ex.Message);
             }
 
-            return result;
+            return fullPath;
         }
-        public async Task<string> TakePhotoAsync()
+
+        public async Task<string> TakePhotoFullPathAsync()
         {
+            string fullPath = "";
+
             try
             {
                 var photo = await MediaPicker.CapturePhotoAsync(new MediaPickerOptions
@@ -37,23 +39,26 @@ namespace ProfileBook.Services.Dialogs
                     Title = $"xamarin.{DateTime.Now.ToString("dd.MM.yyyy_hh.mm.ss")}.png"
                 });
 
-
                 var newFile = Path.Combine(FileSystem.AppDataDirectory, photo.FileName);
-                using (var stream = await photo.OpenReadAsync())
-                using (var newStream = File.OpenWrite(newFile))
-                    await stream.CopyToAsync(newStream);
 
-                if (photo.FullPath != null)
+                using (var stream = await photo.OpenReadAsync())
                 {
-                    result = photo.FullPath;     
+                    using (var newStream = File.OpenWrite(newFile))
+                    {
+                        await stream.CopyToAsync(newStream);
+                    }
                 }
+
+                fullPath = photo.FullPath;
             }
             catch (Exception ex)
             {
-                await UserDialogs.Instance.AlertAsync(ex.Message, "Error", "OK");
+                await UserDialogs.Instance.AlertAsync(ex.Message);
             }
 
-            return result;
+            return fullPath;
         }
+
+        #endregion
     }
 }

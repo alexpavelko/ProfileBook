@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using ProfileBook.Models;
+using ProfileBook.Services.ProfileManager;
 using ProfileBook.Services.Repository;
 using ProfileBook.Services.Settings;
 
-namespace ProfileBook.Services.Profile
+namespace ProfileBook.Services.ProfileManager
 {
     public class ProfileManager : IProfileManager
     {
@@ -17,27 +19,32 @@ namespace ProfileBook.Services.Profile
             _settingsManager = settingsManager;
         }
 
-        public async Task<List<Models.Profile>> GetProfiles()
+        #region -- IProfileManager implementation --
+
+        public async Task<IEnumerable<Profile>> GetProfilesAsync()
         {
             var currentUserId = _settingsManager.UserId;
 
             string sqlCommand = $"SELECT * FROM Profiles WHERE UserId={currentUserId}";
 
-            var profiles = await _repository.GetAllWithQueryAsync<Models.Profile>(sqlCommand);
+            var profiles = await _repository.GetAllWithQueryAsync<Profile>(sqlCommand);
 
             return profiles;
         }
 
-        public async Task<Models.Profile> RemoveProfile(Models.Profile profile)
+        public async Task<Profile> RemoveProfileAsync(Profile profile)
         {
-            if (File.Exists(profile.ProfileImage)) File.Delete(profile.ProfileImage);
+            if (File.Exists(profile.ProfileImage))
+            {
+                File.Delete(profile.ProfileImage);
+            }
 
             await _repository.DeleteAsync(profile);
 
             return profile;
         }
 
-        public async Task<Models.Profile> SaveProfile(Models.Profile profile)
+        public async Task<Profile> SaveProfileAsync(Profile profile)
         {
             var profileToSave = profile;
 
@@ -47,5 +54,7 @@ namespace ProfileBook.Services.Profile
 
             return profile;
         }
+
+        #endregion
     }
 }

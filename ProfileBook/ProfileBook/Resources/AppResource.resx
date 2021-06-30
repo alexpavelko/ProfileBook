@@ -160,7 +160,7 @@
     <value>Error login or password</value>
   </data>
   <data name="FieldsIsEmpty" xml:space="preserve">
-    <value>All fields must be field!</value>
+    <value>All fields must be filled!</value>
   </data>
   <data name="Finally" xml:space="preserve">
     <value>Finally...</value>

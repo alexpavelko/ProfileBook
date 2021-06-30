@@ -4,7 +4,7 @@ namespace ProfileBook.Services.Dialogs
 {
     public interface ICameraDialogService
     {
-        Task<string> GetPhotoAsync();
-        Task<string> TakePhotoAsync();
+        Task<string> GetPhotoFullPathAsync();
+        Task<string> TakePhotoFullPathAsync();
     }
 }

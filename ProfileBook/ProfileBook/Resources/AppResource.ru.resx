@@ -201,6 +201,9 @@
   <data name="Nope" xml:space="preserve">
     <value>Нее</value>
   </data>
+  <data name="NoProfiles" xml:space="preserve">
+    <value>Пока что нет профайлов.</value>
+  </data>
   <data name="Ok" xml:space="preserve">
     <value>Окей</value>
   </data>

@@ -3,7 +3,7 @@ using System.Windows.Input;
 using Prism.Navigation;
 using ProfileBook.Views;
 using Acr.UserDialogs;
-using ProfileBook.Services.Profile;
+using ProfileBook.Services.ProfileManager;
 using ProfileBook.Models;
 using System;
 using ProfileBook.Services.Validators;
@@ -49,7 +49,7 @@ namespace ProfileBook.ViewModels
             set => SetProperty(ref _description, value);
         }
         
-        public ICommand OnImageTapCommand => new Command(OnImageTap);
+        public ICommand ImageTappedCommand => new Command(OnImageTappedCommand);
         public ICommand SaveCommand => new Command(OnSaveTap);
 
         #endregion
@@ -75,7 +75,7 @@ namespace ProfileBook.ViewModels
         {
             base.OnNavigatedTo(parameters);
 
-            parameters.TryGetValue("Profile", out Profile profile);
+            parameters.TryGetValue(nameof(Profile), out Profile profile);
 
             if (profile != null)
             {
@@ -95,12 +95,12 @@ namespace ProfileBook.ViewModels
 
         #region -- Private Helpers --
 
-        private void OnImageTap()
+        private void OnImageTappedCommand()
         {
             UserDialogs.ActionSheet(new ActionSheetConfig()
                                    .SetTitle(Resources["ChooseAction"])
-                                   .Add(Resources["Pick at Gallery"], async () => ProfileImage = await _dialogService.GetPhotoAsync(), Values.GALLERY_ICON)
-                                   .Add(Resources["TakePhoto"], async () => ProfileImage = await _dialogService.TakePhotoAsync(), Values.CAMERA_ICON)
+                                   .Add(Resources["Pick at Gallery"], async () => ProfileImage = await _dialogService.GetPhotoFullPathAsync(), Values.GALLERY_ICON)
+                                   .Add(Resources["TakePhoto"], async () => ProfileImage = await _dialogService.TakePhotoFullPathAsync(), Values.CAMERA_ICON)
                                    .Add(Resources["Cancel"], () => ProfileImage = ProfileImage, Values.CANCEL)
                                    );
         }
@@ -120,11 +120,11 @@ namespace ProfileBook.ViewModels
             }
             else
             {
-                var list = _profileManager.GetProfiles();
+                var list = _profileManager.GetProfilesAsync();
 
                 CurrentProfile.ProfileImage = ProfileImage;
 
-                await _profileManager.SaveProfile(CurrentProfile);
+                await _profileManager.SaveProfileAsync(CurrentProfile);
 
                 await NavigationService.NavigateAsync($"/{nameof(NavigationPage)}/{nameof(MainListView)}");
             }

@@ -3,6 +3,7 @@ using Prism.Navigation;
 using ProfileBook.Enums;
 using ProfileBook.Services.Settings;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -10,26 +11,19 @@ namespace ProfileBook.ViewModels
 {
     public class SettingsViewModel : BaseViewModel
     {
-        private INavigationService _navigationService;
+        private ISettingsManager _settingsManager;
 
-        #region --Public Propertties--
+        #region -- Public Properties --
 
         private string _selectedLanguage;
         public string SelectedLanguage
         {
             get => _selectedLanguage;
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    SetProperty(ref _selectedLanguage, value);
-                    SettingsManager.Language = SelectedLanguage;
-                }
-            }
+            set => SetProperty(ref _selectedLanguage, value);
         }
 
-        private List<string> _languages;
-        public List<string> Languages
+        private ObservableCollection<string> _languages;
+        public ObservableCollection<string> Languages
         {
             get => _languages;
             set => SetProperty(ref _languages, value);
@@ -41,20 +35,24 @@ namespace ProfileBook.ViewModels
             IUserDialogs userDialogs, ISettingsManager settingsManager)
             : base(navigationService, userDialogs, settingsManager)
         {
-            _navigationService = NavigationService;
-            Languages = new List<string>(System.Enum.GetNames(typeof(Languages)));
-
-            SelectedLanguage = SettingsManager.Language;
+            _settingsManager = settingsManager;
         }
 
-        #region --Overrides--
-
-        public new void OnPropertyChanged([CallerMemberName] string property = null)
+        public override void Initialize(INavigationParameters parameters)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-        }
+            Languages = new ObservableCollection<string>(System.Enum.GetNames(typeof(Languages)));
+            
+            SelectedLanguage = _settingsManager.Language;
+         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
-        #endregion
+        //NOT WORKS ↓
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == SelectedLanguage && SelectedLanguage != null)
+            {
+                _settingsManager.Language = SelectedLanguage;
+            }
+        }
     }
 }

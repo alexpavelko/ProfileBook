@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ProfileBook.Services.Authentication
 {
-    class AuthenticationService : IAuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
         private IRepository _repository;
         private ISettingsManager _settingsManager;
@@ -17,9 +17,9 @@ namespace ProfileBook.Services.Authentication
 
         #region -- IAuthenticationService implementation --
 
-        public async Task<bool> SignIn(string login, string password)
+        public async Task<bool> SignInAsync(string login, string password)
         {
-            var signInResult = false;
+            bool signInResult = false;
 
             string sqlCommand = $"SELECT * FROM Users WHERE Login='{login}' AND Password='{password}'";
 
@@ -33,7 +33,7 @@ namespace ProfileBook.Services.Authentication
 
             return signInResult;
         }
-        public async Task<bool> SignUp(string login, string password)
+        public async Task<bool> SignUpAsync(string login, string password)
         {
             var signUpResult = false;
 

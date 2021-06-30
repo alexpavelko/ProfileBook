@@ -14,7 +14,7 @@ namespace ProfileBook.ViewModels
     {
         private IAuthenticationService _authenticationService;
 
-        #region -- Properties --
+        #region -- Public Properties --
 
         private string _login;
         public string Login
@@ -57,11 +57,11 @@ namespace ProfileBook.ViewModels
 
             if (isLoginValid && isPasswrodValid)
             {
-                var signUpResult = await _authenticationService.SignUp(Login, Password);
+                var signUpResult = await _authenticationService.SignUpAsync(Login, Password);
 
                 if (signUpResult)
                 {
-                    User user = new User { Login = Login, Password = Password };
+                    var user = new User { Login = Login, Password = Password };
 
                     await UserDialogs.AlertAsync(Resources["RedirectingToSignIn"], Resources["SuccessfullRegistration"], Resources["Ok"]);
 

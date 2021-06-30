@@ -5,14 +5,17 @@ using ProfileBook.Views;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
-using ProfileBook.Services.Profile;
+using ProfileBook.Services.ProfileManager;
 using ProfileBook.Services.Authorization;
 using ProfileBook.Extension;
 using ProfileBook.Services.Settings;
+using System.Linq;
+using System.Collections;
+using ProfileBook.Models;
 
 namespace ProfileBook.ViewModels
 {
-    class MainListViewModel : BaseViewModel
+    public class MainListViewModel : BaseViewModel
     {
         private IProfileManager _profileManager;
         private IAuthorizationService _authorizationService;
@@ -53,8 +56,8 @@ namespace ProfileBook.ViewModels
             _authorizationService = authenticationService;           
         }
 
-
         #region -- Overrides --
+
         public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
@@ -65,28 +68,31 @@ namespace ProfileBook.ViewModels
         {
             await GetAllUserProfiles();
 
-            UpdateCollection();
+            CheckIsListEmpty();
         }
 
         #endregion
 
         #region -- Private Helpers --
 
-        private async Task GetAllUserProfiles()
+        private async Task<IEnumerable> GetAllUserProfiles()
         {
             ProfileList.Clear();
 
-            var profiles = await _profileManager.GetProfiles(); 
+            var profiles = await _profileManager.GetProfilesAsync(); 
 
             if (profiles != null)
             {
-                profiles.ForEach(item => ProfileList.Add(item.ToViewModel()));
+                var items = profiles.Select(item => item.ToViewModel());
+                ProfileList = new ObservableCollection<ProfileViewModel>(items);
             }
+
+            return ProfileList;
         }
 
         private async void OnLogOutTap()
         {
-            var isAuthorize = _authorizationService.IsAuthorize();
+            var isAuthorize = _authorizationService.IsAuthorized();
             var confirmExit = await UserDialogs.ConfirmAsync(Resources["SureQuestion"], Resources["ConfirmAction"], Resources["Ok"], Resources["Cancel"]); 
 
             if (isAuthorize && confirmExit)
@@ -106,12 +112,13 @@ namespace ProfileBook.ViewModels
         {
             if (profileToUpdate != null)
             {
-                var profile = (ProfileViewModel)profileToUpdate;
+                var profile = profileToUpdate as ProfileViewModel;
 
                 var parameters = new NavigationParameters()
                 {
-                    { "Profile", profile.ToModel() } 
+                    { nameof(Profile), profile.ToModel() } 
                 };
+
                 await NavigationService.NavigateAsync($"{nameof(AddEditProfileView)}", parameters);
             }
         }
@@ -124,11 +131,11 @@ namespace ProfileBook.ViewModels
             {
                 var profile = (ProfileViewModel)profileToDelete;
 
-                await _profileManager.RemoveProfile(profile.ToModel());
+                await _profileManager.RemoveProfileAsync(profile.ToModel());
 
                 ProfileList.Remove(profile);
 
-                UpdateCollection();
+                CheckIsListEmpty();
             }
         }
 
@@ -137,7 +144,7 @@ namespace ProfileBook.ViewModels
             await NavigationService.NavigateAsync($"{nameof(SettingsView)}");
         }
 
-        private void UpdateCollection()
+        private void CheckIsListEmpty()
         {
             LabelIsVisible = ProfileList.Count == 0;
         }

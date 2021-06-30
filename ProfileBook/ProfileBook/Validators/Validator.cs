@@ -1,42 +1,43 @@
-﻿using System.Text.RegularExpressions;
+﻿using ProfileBook.Localization;
+using ProfileBook.Models;
+using ProfileBook.Resources;
+using System.Text.RegularExpressions;
 
 namespace ProfileBook.Services.Validators
 {
     public static class Validator
     {
-        public static string alert { get ; set; }
-        private static bool isValid { get; set; }
-        
-        public static bool IsProfileValid(Models.Profile profile)
+        private static LocalizedResources Resources { get; set; }
+        public static string alert;
+        public static bool IsProfileValid(Profile profile)
         {
-            isValid = true;
+            Resources = new LocalizedResources(typeof(AppResource), DefaultValues.Values.DEFAULT_LANG);
+            bool isValid = true;
 
             if (string.IsNullOrEmpty(profile.Name) || string.IsNullOrEmpty(profile.NickName))
             {               
                 isValid = false;
             }
 
-            if (profile.Description == null)
-            {
-                profile.Description = string.Empty;
-            }
-
             return isValid;
         }
         public static bool IsLoginValid(string login)
         {
+            Resources = new LocalizedResources(typeof(AppResource), DefaultValues.Values.DEFAULT_LANG);
+            bool isValid = false;
+
             if (login != null)
             {
-                isValid = true;
+               isValid = true;
 
                 if (!Regex.IsMatch(login, @"^[a-zA-Z][a-zA-Z0-9]{3,16}$"))
                 {
-                    alert = "Login:\n * Minimum 4 chars, maximum 16 chars.\n * Can not starts with number\n";
+                    alert = Resources["LoginNotValid"];
                     isValid = false;
                 }
                 else
                 {
-                    alert = "All fields must be field!";
+                    alert = Resources["FieldsIsEmpty"];
                 }
             }
 
@@ -44,25 +45,27 @@ namespace ProfileBook.Services.Validators
         }
         public static bool IsPasswordValid(string password, string confirmPassword)
         {
-           if (password != null && confirmPassword != null)
-           {
+            bool isValid = false;
+
+            if (password != null && confirmPassword != null)
+            {
                 isValid = true;
 
                 if (!Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$"))
                 {
-                    alert = "Passsword:\n * Minimum 8 chars, maximum 16 chars.\n * At least 1 uppercase letter, 1 lowercase letter and 1 number\n";
+                    alert = Resources["PasswordNotValid"];
                     isValid = false;
                 }
 
                 if (!confirmPassword.Equals(password))
                 {
-                    alert = "Confirm password:\n * Must match the password\n";
+                    alert = Resources["PasswordsAreNotEqual"];
                     isValid = false;
                 }               
             }
             else 
             {
-                alert = "All fields must be field!";
+                alert = Resources["FieldsIsEmpty"];
             }
 
             return isValid;

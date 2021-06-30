@@ -5,6 +5,8 @@ namespace ProfileBook.Services.Settings
 {
     public class SettingsManager : ISettingsManager
     {
+        #region -- ISettingsManager implementation --
+
         public int UserId
         {
             get => Preferences.Get(nameof(UserId), Values.DEFAULT_USER_ID);
@@ -20,5 +22,7 @@ namespace ProfileBook.Services.Settings
         {
             Preferences.Set(nameof(UserId), userId);
         }
+
+        #endregion
     }
 }

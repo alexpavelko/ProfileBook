@@ -14,23 +14,10 @@ namespace ProfileBook.Services.Authorization
 
         #region -- IAuthorizationService implementation --
 
-        public bool IsAuthorize()
-        {
-            var result = false;
+        public bool IsAuthorized() => _settingsManager.UserId >= 0;
 
-            if(_settingsManager.UserId >= 0)
-            {
-                result = true;
-            }
-
-            return result;
-        }
-
-        public void LogOut()
-        {
-            _settingsManager.ChangeUserId(Values.DEFAULT_USER_ID);
-        }
-
+        public void LogOut() => _settingsManager.ChangeUserId(Values.DEFAULT_USER_ID);
+   
         #endregion
     }
 }

@@ -187,7 +187,7 @@ namespace ProfileBook.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All fields must be field!.
+        ///   Looks up a localized string similar to All fields must be filled!.
         /// </summary>
         internal static string FieldsIsEmpty {
             get {

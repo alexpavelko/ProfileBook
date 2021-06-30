@@ -4,7 +4,7 @@ namespace ProfileBook.Localization
 {
     public class CultureChangedMessage
     {
-        public CultureInfo NewCultureInfo { get; private set; }
+        public CultureInfo NewCultureInfo { get; }
 
         public CultureChangedMessage(string lngName) 
             : this (new CultureInfo(lngName))

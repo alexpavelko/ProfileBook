@@ -1,36 +1,29 @@
-﻿using Acr.UserDialogs;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
-using System.Text;
 using Xamarin.Forms;
 
 namespace ProfileBook.Localization
 {
     public class LocalizedResources : INotifyPropertyChanged
     {
-        const string DefaultLanguage = "en";
-        readonly ResourceManager ResourceManager;
-        CultureInfo CurrentCultureInfo;
+        private readonly ResourceManager _resourceManager;
+        private CultureInfo _currentCultureInfo;
 
         public string this[string key]
         {
-            get
-            {
-                return ResourceManager.GetString(key, CurrentCultureInfo);               
-            }
+            get => _resourceManager.GetString(key, _currentCultureInfo);
         }
 
         public LocalizedResources(Type resource, string language = null)
-            : this(resource, new CultureInfo(language ?? DefaultLanguage))
+            : this(resource, new CultureInfo(language ?? DefaultValues.Values.DEFAULT_LANG))
         { }
 
         public LocalizedResources(Type resource, CultureInfo cultureInfo)
         {
-            CurrentCultureInfo = cultureInfo;
-            ResourceManager = new ResourceManager(resource);
+            _currentCultureInfo = cultureInfo;
+            _resourceManager = new ResourceManager(resource);
 
             MessagingCenter.Subscribe<object, CultureChangedMessage>(this,
                 string.Empty, OnCultureChanged);
@@ -38,7 +31,7 @@ namespace ProfileBook.Localization
 
         private void OnCultureChanged(object s, CultureChangedMessage ccm)
         {
-            CurrentCultureInfo = ccm.NewCultureInfo;
+            _currentCultureInfo = ccm.NewCultureInfo;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Item"));
         }
 

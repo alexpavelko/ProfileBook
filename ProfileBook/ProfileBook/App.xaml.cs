@@ -1,6 +1,6 @@
 ﻿using Prism.Ioc;
 using Prism.Unity;
-using ProfileBook.Services.Profile;
+using ProfileBook.Services.ProfileManager;
 using ProfileBook.Services.Repository;
 using ProfileBook.Services.Settings;
 using ProfileBook.ViewModels;
@@ -20,20 +20,21 @@ namespace ProfileBook
             _authorizationService ?? (_authorizationService = Container.Resolve<IAuthorizationService>());
         public App() { }
         
-        #region ---Overrides--
-        protected override void OnInitialized()
+        #region -- Overrides --
+
+        protected override async void OnInitialized()
         {
             InitializeComponent();
 
-            var isAuthorize = AuthorizationService.IsAuthorize();
+            var isAuthorized = AuthorizationService.IsAuthorized();
 
-            if (isAuthorize)
+            if (isAuthorized)
             {
-                NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(MainListView)}");
+                await NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(MainListView)}");
             }
             else
             {               
-                NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignInView)}");
+                await NavigationService.NavigateAsync($"{nameof(NavigationPage)}/{nameof(SignInView)}");
             }
         }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)

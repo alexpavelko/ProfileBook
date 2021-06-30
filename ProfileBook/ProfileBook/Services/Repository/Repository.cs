@@ -18,18 +18,19 @@ namespace ProfileBook.Services.Repository
                 var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Values.DB_NAME);
                 var database = new SQLiteAsyncConnection(path);
 
-                database.CreateTableAsync<Models.Profile>().Wait();
+                database.CreateTableAsync<Profile>().Wait();
 
-                database.CreateTableAsync<Models.User>().Wait();
-
+                database.CreateTableAsync<User>().Wait();
 
                 return database;
             });
         }
 
-        public async Task DeleteAsync<T>(T entity) where T : IEntityBase, new()
+        #region -- IRepository implementation --
+
+        public Task DeleteAsync<T>(T entity) where T : IEntityBase, new()
         {
-            await _database.Value.DeleteAsync(entity);
+            return _database.Value.DeleteAsync(entity);
         }
 
         public async Task<List<T>> GetAllWithQueryAsync<T>(string sqlCommand) where T : IEntityBase, new()
@@ -55,8 +56,15 @@ namespace ProfileBook.Services.Repository
         public async Task AddOrUpdateAsync<T>(T entity) where T : IEntityBase, new()
         {
             if (entity.Id == 0)
+            {
                 await AddAsync(entity);
-            else await UpdateAsync(entity);
+            }
+            else
+            {
+                await UpdateAsync(entity);
+            }
         }
+
+        #endregion
     }
 }
